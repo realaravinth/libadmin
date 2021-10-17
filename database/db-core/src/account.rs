@@ -24,7 +24,7 @@ pub trait UpdateEmail: GetConnection {
     /// Database specific error-type
     type Error: std::error::Error;
     /// Update email of specified user in database
-    async fn username_login(
+    async fn update_email(
         &self,
         payload: &UpdateEmailPayload,
     ) -> DBResult<(), <Self as UpdateEmail>::Error>;

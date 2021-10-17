@@ -21,7 +21,7 @@ pub trait Connect {
     /// database connection type
     type Config;
     /// database specific pool-type
-    type Pool;
+    type Pool: GetConnection;
     /// database specific error-type
     type Error: std::error::Error;
     /// create connection pool
