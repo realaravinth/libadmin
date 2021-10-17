@@ -3,7 +3,13 @@ use crate::dev::*;
 
 /// Top-level trait grouping all account management operations
 pub trait Account:
-    UpdateEmail + EmailExists + DeleteAccount + UpdatePassword + UpdateUsername + UsernameExists
+    UpdateEmail
+    + EmailExists
+    + DeleteAccount
+    + UpdatePassword
+    + UpdateUsername
+    + UsernameExists
+    + UpdateSecret
 {
 }
 
@@ -11,11 +17,11 @@ pub use crate::auth::login::Creds;
 
 /// payload to update email in the database
 #[derive(Clone, Debug)]
-pub struct UpdateEmailPayload {
+pub struct UpdateEmailPayload<'a> {
     /// name of the user who's email is to be updated
-    pub name: String,
+    pub name: &'a str,
     /// new email
-    pub email: String,
+    pub email: &'a str,
 }
 
 /// Update email of specified user in database
@@ -73,11 +79,11 @@ pub trait UsernameExists: ops::GetConnection {
 }
 
 /// payload to update a username in database
-pub struct UpdateUsernamePayload {
+pub struct UpdateUsernamePayload<'a> {
     /// old usename
-    pub old_username: String,
+    pub old_username: &'a str,
     /// new username
-    pub new_username: String,
+    pub new_username: &'a str,
 }
 
 /// update username in database
@@ -90,4 +96,17 @@ pub trait UpdateUsername: ops::GetConnection {
         &self,
         payload: &UpdateUsernamePayload,
     ) -> DBResult<(), <Self as UpdateUsername>::Error>;
+}
+
+/// update user secret in database
+#[async_trait]
+pub trait UpdateSecret: ops::GetConnection {
+    /// Database specific error-type
+    type Error: std::error::Error;
+    /// update secret in database
+    async fn update_secret(
+        &self,
+        username: &str,
+        secret: &str,
+    ) -> DBResult<(), <Self as UpdateSecret>::Error>;
 }

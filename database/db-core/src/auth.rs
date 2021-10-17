@@ -57,25 +57,25 @@ pub mod register {
     pub trait Register: EmailRegister + UsernameRegister {}
 
     /// payload to register a user with username _and_ email
-    pub struct EmailRegisterPayload {
+    pub struct EmailRegisterPayload<'a> {
         /// username of new user
-        pub username: String,
+        pub username: &'a str,
         /// password of new user
-        pub password: String,
+        pub password: &'a str,
         /// password of new user
-        pub email: String,
+        pub email: &'a str,
         /// a randomly generated secret associated with an account
-        pub secret: String,
+        pub secret: &'a str,
     }
 
     /// payload to register a user with only username
-    pub struct UsernameRegisterPayload {
+    pub struct UsernameRegisterPayload<'a> {
         /// username provided during registration
-        pub username: String,
+        pub username: &'a str,
         /// password of new user
-        pub password: String,
+        pub password: &'a str,
         /// a randomly generated secret associated with an account
-        pub secret: String,
+        pub secret: &'a str,
     }
 
     #[async_trait]
