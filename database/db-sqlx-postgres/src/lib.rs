@@ -1,10 +1,11 @@
-use async_trait::async_trait;
-
-use db_core::errors::*;
-use db_core::*;
+use db_core::dev::*;
 
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
+
+pub mod account;
+pub mod auth;
+pub mod errors;
 
 pub struct Database {
     pub pool: PgPool,
@@ -15,6 +16,22 @@ pub struct ConnectionOptions {
     pub url: String,
 }
 
+impl LibAdminDatabase for Database {}
+
+pub mod dev {
+    pub use super::errors::*;
+    pub use super::Database;
+    pub use db_core::dev::*;
+    pub use prelude::*;
+    pub use sqlx::Error;
+}
+
+pub mod prelude {
+    pub use super::*;
+    pub use db_core::prelude::*;
+}
+
+impl DBOps for Database {}
 #[async_trait]
 impl Connect for Database {
     type Error = sqlx::Error;
@@ -26,7 +43,7 @@ impl Connect for Database {
             .pool_options
             .connect(&config.url)
             .await
-            .map_err(|e| DBError::DBError(e))?;
+            .map_err(DBError::DBError)?;
         Ok(Self { pool })
     }
 }
@@ -43,19 +60,11 @@ impl GetConnection for Database {
 #[async_trait]
 impl Migrate for Database {
     type Error = sqlx::migrate::MigrateError;
-    async fn migrate<C: GetConnection>(&self) -> DBResult<(), Self::Error> {
+    async fn migrate(&self) -> DBResult<(), <Self as Migrate>::Error> {
         sqlx::migrate!("./migrations/")
             .run(&self.pool)
             .await
-            .map_err(|e| DBError::DBError(e))?;
+            .map_err(DBError::DBError)?;
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }
