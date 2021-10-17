@@ -18,13 +18,14 @@ pub trait GetConnection {
     fn get_conn(&self) -> DBResult<Self::Conn, Self::Error>;
 }
 
-/// Get database connection
+/// Create databse connection
+#[async_trait]
 pub trait Connect {
     /// Database connection type
     type Config;
     type Pool;
     type Error: std::error::Error;
-    fn get_conn(config: Self::Config) -> DBResult<Self::Pool, Self::Error>;
+    async fn connect(config: Self::Config) -> DBResult<Self::Pool, Self::Error>;
 }
 
 /// database migrations
