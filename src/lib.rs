@@ -53,15 +53,10 @@ lazy_static! {
 
 pub const CACHE_AGE: u32 = 604800;
 
-pub type AppData = actix_web::web::Data<Arc<crate::data::Data>>;
+pub type AppData<T> = actix_web::web::Data<Arc<crate::data::Data<T>>>;
 
 pub fn init(settings: Settings) {
     let _ = SETTINGS.set(settings);
-}
-
-pub async fn migrate() {
-    let data = Data::new().await;
-    sqlx::migrate!("./migrations/").run(&data.db).await.unwrap();
 }
 
 #[cfg(not(tarpaulin_include))]

@@ -18,6 +18,7 @@
 use actix_identity::Identity;
 use actix_web::http::header;
 use actix_web::{web, HttpResponse, Responder};
+use db_core::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use super::get_random;
@@ -68,8 +69,6 @@ pub mod routes {
 }
 
 pub mod runners {
-    use std::borrow::Cow;
-
     use super::*;
 
     #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -94,9 +93,8 @@ pub mod runners {
     }
 
     /// returns Ok(()) when everything checks out and the user is authenticated. Erros otherwise
-    pub async fn login_runner(payload: &Login, data: &AppData) -> ServiceResult<String> {
+    pub async fn login_runner<T>(payload: &Login, data: &AppData<T>) -> ServiceResult<String> {
         use argon2_creds::Config;
-        use sqlx::Error::RowNotFound;
 
         let verify = |stored: &str, received: &str| {
             if Config::verify(stored, received)? {
@@ -106,51 +104,22 @@ pub mod runners {
             }
         };
 
-        if payload.login.contains('@') {
-            #[derive(Clone, Debug)]
-            struct EmailLogin {
-                name: String,
-                password: String,
-            }
-
-            let email_fut = sqlx::query_as!(
-                EmailLogin,
-                r#"SELECT name, password  FROM admin_users WHERE email = ($1)"#,
-                &payload.login,
-            )
-            .fetch_one(&data.db)
-            .await;
-
-            match email_fut {
-                Ok(s) => {
-                    verify(&s.password, &payload.password)?;
-                    Ok(s.name)
-                }
-
-                Err(RowNotFound) => Err(ServiceError::AccountNotFound),
-                Err(_) => Err(ServiceError::InternalServerError),
-            }
+        let res = if payload.login.contains('@') {
+            data.db.email_login(&payload.login).await;
         } else {
-            let username_fut = sqlx::query_as!(
-                Password,
-                r#"SELECT password  FROM admin_users WHERE name = ($1)"#,
-                &payload.login,
-            )
-            .fetch_one(&data.db)
-            .await;
-
-            match username_fut {
-                Ok(s) => {
-                    verify(&s.password, &payload.password)?;
-                    Ok(payload.login.clone())
-                }
-                Err(RowNotFound) => Err(ServiceError::AccountNotFound),
-                Err(_) => Err(ServiceError::InternalServerError),
+            data.db.username_login(&payload.login).await;
+        };
+        match res {
+            Ok(s) => {
+                verify(&s.password, &payload.password)?;
+                Ok(payload.login.clone())
             }
+            Err(DBError::AccountNotFound) => Err(ServiceError::AccountNotFound),
+            Err(_) => Err(ServiceError::InternalServerError),
         }
     }
 
-    pub async fn register_runner(payload: &Register, data: &AppData) -> ServiceResult<()> {
+    pub async fn register_runner<T>(payload: &Register, data: &AppData<T>) -> ServiceResult<()> {
         if !crate::SETTINGS.get().unwrap().allow_registration {
             return Err(ServiceError::ClosedForRegistration);
         }
@@ -167,49 +136,39 @@ pub mod runners {
 
         let mut secret;
 
-        loop {
-            secret = get_random(32);
-            let res;
-            if let Some(email) = &payload.email {
-                res = sqlx::query!(
-                    "insert into admin_users 
-        (name , password, email, secret) values ($1, $2, $3, $4)",
-                    &username,
-                    &hash,
-                    &email,
-                    &secret,
-                )
-                .execute(&data.db)
-                .await;
-            } else {
-                res = sqlx::query!(
-                    "INSERT INTO admin_users 
-        (name , password,  secret) VALUES ($1, $2, $3)",
-                    &username,
-                    &hash,
-                    &secret,
-                )
-                .execute(&data.db)
-                .await;
-            }
-            if res.is_ok() {
-                break;
-            } else if let Err(sqlx::Error::Database(err)) = res {
-                if err.code() == Some(Cow::from("23505")) {
-                    let msg = err.message();
-                    if msg.contains("admin_users_name_key") {
-                        return Err(ServiceError::UsernameTaken);
-                    } else if msg.contains("admin_users_email_key") {
-                        return Err(ServiceError::EmailTaken);
-                    } else if msg.contains("admin_users_secret_key") {
-                        continue;
-                    } else {
-                        return Err(ServiceError::InternalServerError);
-                    }
-                } else {
-                    return Err(sqlx::Error::Database(err).into());
+        if let Some(email) = &payload.email {
+            loop {
+                secret = get_random(32);
+
+                let mut db_payload = EmailRegisterPayload {
+                    secret,
+                    username,
+                    password: hash,
+                    email: email.to_owned(),
+                };
+
+                match data.db.email_register(&db_payload).await {
+                    Ok(_) => break,
+                    Err(DBError::DuplicateSecret) => continue,
+                    Err(e) => return Err(e.into()),
                 }
-            };
+            }
+        } else {
+            loop {
+                secret = get_random(32);
+
+                let mut db_payload = UsernameRegisterPayload {
+                    secret,
+                    username,
+                    password: hash,
+                };
+
+                match data.db.username_register(&db_payload).await {
+                    Ok(_) => break,
+                    Err(DBError::DuplicateSecret) => continue,
+                    Err(e) => return Err(e.into()),
+                }
+            }
         }
         Ok(())
     }
@@ -221,20 +180,20 @@ pub fn services(cfg: &mut web::ServiceConfig) {
     cfg.service(signout);
 }
 #[my_codegen::post(path = "crate::V1_API_ROUTES.auth.register")]
-async fn register(
+async fn register<T>(
     payload: web::Json<runners::Register>,
-    data: AppData,
+    data: AppData<T>,
 ) -> ServiceResult<impl Responder> {
     runners::register_runner(&payload, &data).await?;
     Ok(HttpResponse::Ok())
 }
 
 #[my_codegen::post(path = "crate::V1_API_ROUTES.auth.login")]
-async fn login(
+async fn login<T>(
     id: Identity,
     payload: web::Json<runners::Login>,
     query: web::Query<RedirectQuery>,
-    data: AppData,
+    data: AppData<T>,
 ) -> ServiceResult<impl Responder> {
     let payload = payload.into_inner();
     let username = runners::login_runner(&payload, &data).await?;

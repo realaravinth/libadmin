@@ -19,17 +19,16 @@ use std::sync::Arc;
 use std::thread;
 
 use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
-use sqlx::postgres::PgPoolOptions;
-use sqlx::PgPool;
+use db_core::prelude::*;
 
 /// App data
-pub struct Data {
+pub struct Data<P: LibAdminDatabase> {
     /// databse pool
-    pub db: PgPool,
+    pub db: P,
     pub creds: Config,
 }
 
-impl Data {
+impl<P: GetConnection> Data<P> {
     pub fn get_creds() -> Config {
         ConfigBuilder::default()
             .username_case_mapped(true)
@@ -42,7 +41,10 @@ impl Data {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new() -> Arc<Self> {
+    pub async fn new<C, E, T>(db: T) -> Arc<Self>
+    where
+        T: Connect<Config = C, Pool = P, Error = E>,
+    {
         #[cfg(test)]
         crate::tests::init();
 
@@ -57,11 +59,7 @@ impl Data {
             log::info!("Initialized credential manager");
         });
 
-        let db = PgPoolOptions::new()
-            .max_connections(settings.database.pool)
-            .connect(&settings.database.url)
-            .await
-            .expect("Unable to form database pool");
+        let db = db.connect().await.unwrap();
 
         let data = Data { db, creds };
 

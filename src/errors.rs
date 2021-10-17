@@ -23,6 +23,7 @@ use actix_web::{
     HttpResponse, HttpResponseBuilder,
 };
 use argon2_creds::errors::CredsError;
+use db_core::errors::DBError;
 use derive_more::{Display, Error};
 use serde::{Deserialize, Serialize};
 use url::ParseError;
@@ -154,6 +155,19 @@ impl From<ParseError> for ServiceError {
     #[cfg(not(tarpaulin_include))]
     fn from(_: ParseError) -> ServiceError {
         ServiceError::NotAUrl
+    }
+}
+
+impl From<DBError<std::error::Error>> for ServiceError {
+    fn from(e: DBError<std::error::Error>) -> Self {
+        log::error!("{:?}", e);
+        match e {
+            DBError::DBError(_) => ServiceError::InternalServerError,
+            DBError::DuplicateEmail => ServiceError::EmailTaken,
+            DBError::DuplicateUsername => ServiceError::UsernameTaken,
+            DBError::AccountNotFound => ServiceError::AccountNotFound,
+            DBError::DuplicateSecret => ServiceError::InternalServerError,
+        }
     }
 }
 
