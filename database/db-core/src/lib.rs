@@ -1,11 +1,12 @@
 use async_trait::async_trait;
 
+pub mod account;
 pub mod auth;
 pub mod errors;
 
 use errors::*;
 
-pub trait Database: DBConn + Migrate + auth::Auth {}
+pub trait Database: DBConn + Migrate + auth::Auth + account::Account {}
 
 /// Get database connection
 pub trait DBConn {

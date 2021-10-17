@@ -9,14 +9,14 @@ pub mod login {
     use super::*;
 
     #[derive(Clone, Debug)]
-    pub struct EmailLoginResp {
-        name: String,
-        password: String,
+    pub struct Creds {
+        pub username: String,
+        pub password: String,
     }
 
     #[derive(Clone, Debug)]
     pub struct Password {
-        password: String,
+        pub password: String,
     }
 
     pub trait Login: EmailLogin + UsernameLogin {}
@@ -24,10 +24,7 @@ pub mod login {
     #[async_trait]
     pub trait EmailLogin {
         type Error: std::error::Error;
-        async fn email_login<C: DBConn>(
-            conn: C,
-            email: &str,
-        ) -> DBResult<EmailLoginResp, Self::Error>;
+        async fn email_login<C: DBConn>(conn: C, email: &str) -> DBResult<Creds, Self::Error>;
     }
 
     #[async_trait]
