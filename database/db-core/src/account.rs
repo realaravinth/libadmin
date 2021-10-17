@@ -10,6 +10,7 @@ pub trait Account:
     + UpdateUsername
     + UsernameExists
     + UpdateSecret
+    + GetSecret
 {
 }
 
@@ -109,4 +110,13 @@ pub trait UpdateSecret: ops::GetConnection {
         username: &str,
         secret: &str,
     ) -> DBResult<(), <Self as UpdateSecret>::Error>;
+}
+
+/// get user secret from database
+#[async_trait]
+pub trait GetSecret: ops::GetConnection {
+    /// Database specific error-type
+    type Error: std::error::Error;
+    /// update secret in database
+    async fn get_secret(&self, username: &str) -> DBResult<String, <Self as GetSecret>::Error>;
 }
