@@ -8,7 +8,7 @@ pub trait Account:
 }
 
 use crate::auth::login::Creds;
-use crate::DBConn;
+use crate::GetConnection;
 
 #[derive(Clone, Debug)]
 pub struct UpdateEmailPayload {
@@ -19,7 +19,7 @@ pub struct UpdateEmailPayload {
 #[async_trait]
 pub trait UpdateEmail {
     type Error: std::error::Error;
-    async fn username_login<C: DBConn>(
+    async fn username_login<C: GetConnection>(
         conn: C,
         payload: &UpdateEmailPayload,
     ) -> DBResult<(), Self::Error>;
@@ -28,25 +28,32 @@ pub trait UpdateEmail {
 #[async_trait]
 pub trait UpdatePassword {
     type Error: std::error::Error;
-    async fn update_password<C: DBConn>(conn: C, payload: &Creds) -> DBResult<(), Self::Error>;
+    async fn update_password<C: GetConnection>(
+        conn: C,
+        payload: &Creds,
+    ) -> DBResult<(), Self::Error>;
 }
 
 #[async_trait]
 pub trait EmailExists {
     type Error: std::error::Error;
-    async fn email_exists<C: DBConn>(conn: C, email: &str) -> DBResult<bool, Self::Error>;
+    async fn email_exists<C: GetConnection>(conn: C, email: &str) -> DBResult<bool, Self::Error>;
 }
 
 #[async_trait]
 pub trait DeleteAccount {
     type Error: std::error::Error;
-    async fn delete_account<C: DBConn>(conn: C, username: &str) -> DBResult<(), Self::Error>;
+    async fn delete_account<C: GetConnection>(conn: C, username: &str)
+        -> DBResult<(), Self::Error>;
 }
 
 #[async_trait]
 pub trait UsernameExists {
     type Error: std::error::Error;
-    async fn username_exists<C: DBConn>(conn: C, username: &str) -> DBResult<bool, Self::Error>;
+    async fn username_exists<C: GetConnection>(
+        conn: C,
+        username: &str,
+    ) -> DBResult<bool, Self::Error>;
 }
 
 pub struct UpdateUsernamePayload {
@@ -57,7 +64,7 @@ pub struct UpdateUsernamePayload {
 #[async_trait]
 pub trait UpdateUsername {
     type Error: std::error::Error;
-    async fn delete_account<C: DBConn>(
+    async fn delete_account<C: GetConnection>(
         conn: C,
         payload: &UpdateUsernamePayload,
     ) -> DBResult<(), Self::Error>;

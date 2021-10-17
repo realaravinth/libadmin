@@ -2,6 +2,13 @@
 name = "db-core"
 version = "0.1.0"
 edition = "2018"
+homepage = "https://github.com/realaravinth/admin"
+repository = "https://github.com/realaravinth/admin"
+documentation = "https://github.con/realaravinth/admin"
+readme = "https://github.com/realaravinth/admin/blob/master/README.md"
+license = "AGPLv3 or later version"
+authors = ["realaravinth <realaravinth@batsense.net>"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

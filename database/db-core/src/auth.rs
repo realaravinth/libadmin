@@ -4,7 +4,7 @@ use crate::errors::*;
 
 pub trait Auth: login::Login + register::Register {}
 
-use crate::DBConn;
+use crate::GetConnection;
 pub mod login {
     use super::*;
 
@@ -24,13 +24,16 @@ pub mod login {
     #[async_trait]
     pub trait EmailLogin {
         type Error: std::error::Error;
-        async fn email_login<C: DBConn>(conn: C, email: &str) -> DBResult<Creds, Self::Error>;
+        async fn email_login<C: GetConnection>(
+            conn: C,
+            email: &str,
+        ) -> DBResult<Creds, Self::Error>;
     }
 
     #[async_trait]
     pub trait UsernameLogin {
         type Error: std::error::Error;
-        async fn username_login<C: DBConn>(
+        async fn username_login<C: GetConnection>(
             conn: C,
             username: &str,
         ) -> DBResult<Password, Self::Error>;
@@ -58,7 +61,7 @@ pub mod register {
     #[async_trait]
     pub trait EmailRegister {
         type Error: std::error::Error;
-        async fn email_register<C: DBConn>(
+        async fn email_register<C: GetConnection>(
             conn: C,
             payload: &EmailRegisterPayload,
         ) -> DBResult<(), Self::Error>;
@@ -67,7 +70,7 @@ pub mod register {
     #[async_trait]
     pub trait UsernameRegister {
         type Error: std::error::Error;
-        async fn username_login<C: DBConn>(
+        async fn username_login<C: GetConnection>(
             conn: C,
             payload: &UsernameRegisterPayload,
         ) -> DBResult<(), Self::Error>;
