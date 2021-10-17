@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2021  Aravinth Manivannan <realaravinth@batsense.net>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+@import "../button";
+
+@mixin form {
+    margin: 15px auto;
+    width: 100%;
+}
+
+@mixin label {
+    display: block;
+    margin: 10px 0;
+}
+
+@mixin input {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    height: 35px;
+    border-radius: 0px;
+    border: 1px solid grey;
+}
+
+@mixin action_container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin alt_action {
+    font-size: 0.9rem;
+}
+
+@mixin submit {
+    @include button;
+}
+
+@mixin submit_hover {
+    cursor: pointer;
+}

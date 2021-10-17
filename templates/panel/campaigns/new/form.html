@@ -1,0 +1,21 @@
+<h1>Create new campaigns</h1>
+<. include!("../../../components/error/index.html"); .>
+<form
+  action="<.= crate::PAGES.panel.campaigns.new .>"
+  method="POST"
+  class="new-campaign__form"
+  accept-charset="utf-8"
+>
+  <label class="form__label" for="name">
+    Name
+    <input
+      class="form__input"
+      name="name"
+      placeholder=" Joe's website or https://example.com/docs/"
+      required
+      id="name"
+      type="text"
+    />
+  </label>
+  <button class="form__submit" type="submit">Create Campaign</button>
+</form>

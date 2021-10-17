@@ -1,0 +1,11 @@
+<. if crate::SETTINGS.get().unwrap().allow_demo && crate::SETTINGS.get().unwrap().allow_registration { .>
+<p class="auth__demo-user__banner">
+  Try Kaizen without joining<br />
+  <span class="auth__demo-user__cred" >
+    <b>user:</b> <.= crate::demo::DEMO_USER .>
+  </span>
+  <span class="auth__demo-user__cred">
+    <b>password:</b> <.= crate::demo::DEMO_PASSWORD .>
+  </span>
+</p>
+<. } .>

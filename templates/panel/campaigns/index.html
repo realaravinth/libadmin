@@ -1,0 +1,42 @@
+<. include!("../../components/base/top.html"); .>
+<body class="panel__body">
+  <. include!("../nav/index.html"); .>
+  <main class="panel__container">
+    <. if data.is_empty() { .>
+    <p>
+      Looks like you don't have any campaings registered,
+      <a class="link__btn" href="<.= crate::PAGES.panel.campaigns.new .>"> click here </a>
+      to create a new campaign!
+    </p>
+
+    <. } else { .>
+    <table class="campaign__table">
+      <thead class="campaign__heading">
+        <tr>
+          <th class="campaign__title-text">Name</th>
+          <th class="campaign__title-text">UUID</th>
+        </tr>
+      </thead>
+      <tbody class="campaign__body">
+        <. for campaign in data.iter() { .>
+          <. let route = crate::PAGES.panel.campaigns.get_feedback_route(&campaign.uuid); .>
+          <tr class="campaign__item">
+            <td>
+              <a href="<.= &route .>">
+                <p class="campaign__item-heading"><.= campaign.name .></p>
+              </a>
+            </td>
+            <td>
+              <a href="<.= &route .>">
+                <p class="campaign__item-text"><.= campaign.uuid .></p></a
+              >
+            </td>
+          </tr>
+        <. } .>
+      </tbody>
+    </table>
+    <. } .>
+  </main>
+  <. include!("../../components/footer/index.html"); .>
+</body>
+<. include!("../../components/base/bottom.html"); .>

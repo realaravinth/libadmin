@@ -1,0 +1,202 @@
+{
+  "db": "PostgreSQL",
+  "2678317492f3ad949e1c8c798252313f0ea728f981619ab6ab57dbc9d7fccb0d": {
+    "query": "SELECT password  FROM admin_users WHERE name = ($1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "password",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "28bc9a78831a84e864a357a0749733c09cfb390c3a65f3f08fb10f87434957cb": {
+    "query": "UPDATE admin_users set secret = $1\n        WHERE name = $2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "2c527c53748f01d304d7021f38e36adfc8bf3390ab7a9e73a7b4afdbc738188e": {
+    "query": "DELETE FROM admin_users WHERE name = ($1)",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "4658ba5b0fa4d3fdc68420175689bf8bd892b4b0829d5639b63a1396995510fc": {
+    "query": "SELECT secret  FROM admin_users WHERE name = ($1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "secret",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "661e497fd0715e38e117c13b06b1f15cc9375059272b9d6ffdb7f09a64204dbf": {
+    "query": "insert into admin_users \n        (name , password, email, secret) values ($1, $2, $3, $4)",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Text",
+          "Varchar",
+          "Varchar"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "81b47f97484f704a42e5db45a4f672b13cc019bf67f145962d3e3ee307ff6fc7": {
+    "query": "INSERT INTO admin_users \n        (name , password,  secret) VALUES ($1, $2, $3)",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Text",
+          "Varchar"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "9b53b26143e9583dac3454eafb34fdfb5976144b64cdc0504138b74f8b950ccd": {
+    "query": "SELECT EXISTS (SELECT 1 from admin_users WHERE email = $1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "exists",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        null
+      ]
+    }
+  },
+  "a5b8f58c5645e9cfea126351f680ebbb06e34e41bd7a71fbb24ca81b83fd4275": {
+    "query": "UPDATE admin_users set name = $1\n        WHERE name = $2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "b3cc639a3d2fa77b6ea69f59f83f3b4d5874e9063d640a3f118076189855b3cd": {
+    "query": "UPDATE admin_users set password = $1\n        WHERE name = $2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "c5d2e43cb188091d300429079ec3eb379ed3df28e938e4c9e84f65f7e3456424": {
+    "query": "SELECT EXISTS (SELECT 1 from admin_users WHERE name = $1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "exists",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        null
+      ]
+    }
+  },
+  "cfb0eb7b8c1840d015d53855c72e01d48000a8750f9d7db26edd647db4eccdb7": {
+    "query": "SELECT name, password  FROM admin_users WHERE email = ($1)",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 1,
+          "name": "password",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false
+      ]
+    }
+  },
+  "fd2e51fa74d149d9ddabf7315e8a79cf83ea104e888d9f6afaad9597c0c42bef": {
+    "query": "UPDATE admin_users set email = $1\n        WHERE name = $2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  }
+}

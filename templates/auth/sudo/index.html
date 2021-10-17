@@ -1,0 +1,34 @@
+<. include!("../../components/base/top.html"); .>
+<body class="auth__body">
+  <main class="auth__container">
+    <img src="<.= crate::assets::LOGO.path .>" alt="logo" class="auth__logo" />
+    <h1>Confirm Access</h1>
+
+    <p class="sudo__message"><b><.= title .></b></p>
+    <. include!("../../components/error/index.html"); .>
+    <form
+      action="<.= url .>"
+      class="form"
+      method="POST"
+      accept-charset="utf-8"
+    >
+      <label class="form__label" for="password">
+        password
+        <input
+          class="form__input"
+          name="password"
+          required
+          id="password"
+          type="password"
+        />
+      </label>
+
+      <div class="form__action-container">
+        <a href="/forgot-password">Forgot password?</a>
+        <button class="form__submit" type="submit">Authorize</button>
+      </div>
+    </form>
+  </main>
+  <. include!("../../components/footer/index.html"); .>
+</body>
+<. include!("../../components/base/bottom.html"); .>

@@ -1,0 +1,18 @@
+<. include!("../components/base/top.html"); .>
+<body class="auth__body">
+  <main class="auth__container">
+    <img src="<.= crate::assets::LOGO.path .>" alt="logo" class="auth__logo" />
+
+    <. if error.is_some() { .>
+      <. include!("../components/error/index.html"); .>
+    <. } else { .>
+      <h1>Feedback submitted</h1>
+      <p>
+        Thank you for taking the time to fill this form, your feedback goes a long
+        way in improving our service!
+      </p>
+    <. } .>
+  </main>
+  <. include!("../components/footer/index.html"); .>
+</body>
+<. include!("../components/base/bottom.html"); .>

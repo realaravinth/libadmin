@@ -1,0 +1,58 @@
+<. include!("../../../components/base/top.html"); .>
+<body class="panel__body">
+  <. include!("../../nav/index.html"); .>
+  <main class="panel__container">
+    <h1><.= campaign.name .></h1>
+    <a href="<.= crate::PAGES.panel.campaigns.get_delete_route(&uuid) .>" >
+      <img src="<.= crate::assets::TRASH.path .>" alt="<.= crate::assets::TRASH.name .>" class="feedback__trash-logo" />
+    </a>
+
+    <div class="asset__container">
+      <span class="asset__name">Campaign ID</span>
+      <code id="campaign-id" class="asset__value"><.= uuid .></code>
+    </div>
+
+    <. if campaign.feedbacks.is_empty() { .>
+      <p>
+        Looks like you don't have any feedback on this campaign.
+      </p>
+    <. } else { .>
+    <table class="feedback__table">
+      <thead class="feedback__heading">
+        <tr>
+          <th class="feedback__title-text--normal">Time</th>
+          <th class="feedback__title-text--small">Helpful</th>
+          <th class="feedback__title-text--large">Description</th>
+        </tr>
+      </thead>
+      <tbody class="feedback__body">
+        <. for feedback in campaign.feedbacks.iter() { .>
+        <tr class="feedback__item">
+          <td>
+            <.= feedback.time .>
+          </td>
+          <td>
+            <.= feedback.helpful .>
+          </td>
+          <td class="feedback__description">
+            <. if feedback.description.len() > 60 { .>
+                <details>
+                  <. let (summary, rest) = feedback.description.split_at(60); .>
+                  <summary>
+                    <.= summary .>
+                  </summary> >>
+                  <.= rest .>
+                </details>
+              <. } else { .>
+                <.= feedback.description .>
+              <. } .>
+            <. } .>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <. } .>
+  </main>
+  <. include!("../../../components/footer/index.html"); .>
+</body>
+<. include!("../../../components/base/bottom.html"); .>

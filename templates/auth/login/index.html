@@ -1,0 +1,49 @@
+<. include!("../../components/base/top.html"); .>
+<body class="auth__body">
+<main class="auth__container">
+  <img src="<.= crate::assets::LOGO.path .>" alt="logo" class="auth__logo" />
+  <h1>Sign in</h1>
+  <. include!("../../components/error/index.html"); .>
+  <form
+    action="<.= crate::PAGES.auth.login .>"
+    method="POST"
+    class="form"
+    accept-charset="utf-8"
+  >
+    <label class="form__label" for="login">
+      Username or Email
+      <input
+        class="form__input"
+        name="login"
+        required
+        id="login"
+        type="text"
+      />
+    </label>
+
+    <label class="form__label" for="password">
+      password
+      <input
+        class="form__input"
+        name="password"
+        required
+        id="password"
+        type="password"
+      />
+    </label>
+
+    <div class="form__action-container">
+      <a href="/forgot-password">Forgot password?</a>
+      <button class="form__submit" type="submit">Login</button>
+    </div>
+  </form>
+
+  <p class="form__alt-action">
+    New to Kaizen?
+    <a href="<.= crate::PAGES.auth.join .>">Create an account </a>
+  </p>
+  <. include!("../demo-user-banner.html"); .>
+</main>
+<. include!("../../components/footer/index.html"); .> 
+</body>
+<. include!("../../components/base/bottom.html"); .>

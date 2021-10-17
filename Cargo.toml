@@ -1,5 +1,5 @@
 [package]
-name = "admin"
+name = "libadmin"
 version = "0.1.0"
 description = "Admin Panel"
 homepage = "https://github.com/realaravinth/admin"
@@ -9,18 +9,14 @@ readme = "https://github.com/realaravinth/admin/blob/master/README.md"
 license = "AGPLv3 or later version"
 authors = ["realaravinth <realaravinth@batsense.net>"]
 edition = "2018"
-default-run = "admin"
 build = "build.rs"
+exclude = ["./static/cache/bundle/*"]
+include = ["./static/", "./templates"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[[bin]]
-name = "admin"
-path = "./src/main.rs"
-
 [lib]
 name = "libadmin"
 path = "./src/lib.rs"
-
 
 [[bin]]
 name = "tests-migrate"
@@ -55,6 +51,7 @@ pretty_env_logger = "0.4"
 log = "0.4"
 
 lazy_static = "1.4"
+once_cell = "1.8.0"
 
 url = "2.2"
 urlencoding = "2.1.0"
