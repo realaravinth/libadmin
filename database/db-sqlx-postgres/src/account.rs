@@ -160,3 +160,29 @@ impl UpdateSecret for Database {
         Ok(())
     }
 }
+
+/// get secret from database
+#[async_trait]
+impl GetSecret for Database {
+    /// Database specific error-type
+    type Error = Error;
+    /// update username in database
+    async fn get_secret(&self, username: &str) -> DBResult<String, <Self as UpdateSecret>::Error> {
+        struct Secret {
+            secret: String,
+        }
+        let secret = sqlx::query_as!(
+            Secret,
+            r#"SELECT secret  FROM admin_users WHERE username = ($1)"#,
+            username,
+        )
+        .fetch_one(&self.pool)
+        .await
+        .map_err(|e| match e {
+            Error::RowNotFound => DBError::AccountNotFound,
+            e => DBError::DBError(e),
+        })?;
+
+        Ok(secret.secret)
+    }
+}
