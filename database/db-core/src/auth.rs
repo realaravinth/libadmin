@@ -2,6 +2,8 @@ use async_trait::async_trait;
 
 use crate::errors::*;
 
+pub trait Auth: login::Login + register::Register {}
+
 use crate::DBConn;
 pub mod login {
     use super::*;

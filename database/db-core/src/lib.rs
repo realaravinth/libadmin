@@ -1,7 +1,11 @@
+use async_trait::async_trait;
+
 pub mod auth;
 pub mod errors;
 
 use errors::*;
+
+pub trait Database: DBConn + Migrate + auth::Auth {}
 
 /// Get database connection
 pub trait DBConn {
@@ -9,6 +13,13 @@ pub trait DBConn {
     type Conn;
     type Error: std::error::Error;
     fn conn(&self) -> DBResult<Self::Conn, Self::Error>;
+}
+
+/// database migrations
+#[async_trait]
+pub trait Migrate {
+    type Error: std::error::Error;
+    async fn migrate<C: DBConn>(c: C) -> DBResult<(), Self::Error>;
 }
 
 #[cfg(test)]
