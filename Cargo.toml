@@ -23,10 +23,10 @@ name = "tests-migrate"
 path = "./src/tests-migrate.rs"
 
 [workspace]
-mempers = [ ".", "database/db-core"]
+mempers = [ ".", "database/db-core", "database/db-sqlx-postgres"]
 
 [dependencies]
-db-core = {path = "./database/db-core"}
+db-sqlx-postgres = {path = "./database/db-sqlx-postgres"}
 actix-web = "4.0.0-beta.9"
 actix-identity = "0.4.0-beta.2"
 actix-http = "3.0.0-beta.8"

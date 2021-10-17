@@ -11,11 +11,12 @@ pub trait Database: DBOps + auth::Auth + account::Account {}
 pub trait DBOps: GetConnection + Migrate + Connect {}
 
 /// Get database connection
+#[async_trait]
 pub trait GetConnection {
     /// Database connection type
     type Conn;
     type Error: std::error::Error;
-    fn get_conn(&self) -> DBResult<Self::Conn, Self::Error>;
+    async fn get_conn(&self) -> DBResult<Self::Conn, Self::Error>;
 }
 
 /// Create databse connection
@@ -32,7 +33,7 @@ pub trait Connect {
 #[async_trait]
 pub trait Migrate {
     type Error: std::error::Error;
-    async fn migrate<C: GetConnection>(conn: C) -> DBResult<(), Self::Error>;
+    async fn migrate<C: GetConnection>(&self) -> DBResult<(), Self::Error>;
 }
 
 #[cfg(test)]
