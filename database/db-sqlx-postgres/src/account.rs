@@ -136,3 +136,27 @@ impl UpdateUsername for Database {
         Ok(())
     }
 }
+
+/// update secret in database
+#[async_trait]
+impl UpdateSecret for Database {
+    /// Database specific error-type
+    type Error = Error;
+    /// update username in database
+    async fn update_secret(
+        &self,
+        username: &str,
+        secret: &str,
+    ) -> DBResult<(), <Self as UpdateSecret>::Error> {
+        sqlx::query!(
+            "UPDATE admin_users set secret = $1
+        WHERE username = $2",
+            secret,
+            username,
+        )
+        .execute(&self.pool)
+        .await
+        .map_err(map_register_err)?;
+        Ok(())
+    }
+}
