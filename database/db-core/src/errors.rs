@@ -21,6 +21,10 @@ where
     #[display(fmt = "Email not available")]
     DuplicateEmail,
 
+    /// Account with specified characteristics not found
+    #[display(fmt = "Account with specified characteristics not found")]
+    AccountNotFound,
+
     /// errors that are specific to a database implementation
     #[display(fmt = "Database error: {:?}", _0)]
     DBError(DB),

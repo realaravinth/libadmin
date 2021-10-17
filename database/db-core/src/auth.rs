@@ -53,8 +53,6 @@ pub mod register {
     //! registration operations
     use super::*;
 
-    use uuid::Uuid;
-
     /// Top-level traits group all registration mechanisms
     pub trait Register: EmailRegister + UsernameRegister {}
 
@@ -77,7 +75,7 @@ pub mod register {
         /// password of new user
         pub password: String,
         /// a randomly generated secret associated with an account
-        pub secret: Uuid,
+        pub secret: String,
     }
 
     #[async_trait]

@@ -29,7 +29,8 @@ pub trait Database: ops::DBOps + auth::Auth + account::Account {}
 pub mod prelude {
     //! useful imports for users working with a supported database
     pub use super::account::*;
-    pub use super::auth::*;
+    pub use super::auth::login::*;
+    pub use super::auth::register::*;
     pub use super::errors::*;
     pub use super::ops::*;
     pub use super::*;
