@@ -22,7 +22,11 @@ path = "./src/lib.rs"
 name = "tests-migrate"
 path = "./src/tests-migrate.rs"
 
+[workspace]
+mempers = [ ".", "database/db-core"]
+
 [dependencies]
+db-core = {path = "./database/db-core"}
 actix-web = "4.0.0-beta.9"
 actix-identity = "0.4.0-beta.2"
 actix-http = "3.0.0-beta.8"
