@@ -1,9 +1,10 @@
+//! represents all the ways a trait can fail using this crate
 use std::error::Error;
 
 use derive_more::{Display, Error as DeriveError};
 
+/// Error data structure grouping various error subtypes
 #[derive(Debug, Display, PartialEq, DeriveError)]
-#[cfg(not(tarpaulin_include))]
 pub enum DBError<DB>
 where
     DB: Error,
@@ -20,10 +21,10 @@ where
     #[display(fmt = "Email not available")]
     DuplicateEmail,
 
-    /// DB Error
+    /// errors that are specific to a database implementation
     #[display(fmt = "Database error: {:?}", _0)]
     DBError(DB),
 }
 
-#[cfg(not(tarpaulin_include))]
+/// Generic result data structure
 pub type DBResult<V, E> = std::result::Result<V, DBError<E>>;

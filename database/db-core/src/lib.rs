@@ -1,45 +1,42 @@
-use async_trait::async_trait;
-
+#![deny(missing_docs)]
+//! # `libadmin` database operations
+//!
+//! Traits and datastructures used in libadmin to interact with database.
+//!
+//! To use an unsupported database with libadmin, traits present within this crate should be
+//! implemented.
+//!
+//!
+//! ## Organisation
+//!
+//! Database functionallity is divided accross various modules:
+//!
+//! - [account](crate::account): account management operations(updates, deletions, etc.)
+//! - [auth](crate::auth): registration and authentication operations
+//! - [errors](crate::auth): error data structures used in this crate
+//! - [ops](crate::ops): meta operations like connection pool creation, migrations and getting
+//! connection from pool
 pub mod account;
 pub mod auth;
 pub mod errors;
+pub mod ops;
 
-use errors::*;
+pub use ops::GetConnection;
 
-pub trait Database: DBOps + auth::Auth + account::Account {}
+/// Top level trait describing all libadmin database operations
+pub trait Database: ops::DBOps + auth::Auth + account::Account {}
 
-pub trait DBOps: GetConnection + Migrate + Connect {}
-
-/// Get database connection
-#[async_trait]
-pub trait GetConnection {
-    /// Database connection type
-    type Conn;
-    type Error: std::error::Error;
-    async fn get_conn(&self) -> DBResult<Self::Conn, Self::Error>;
+pub mod prelude {
+    //! useful imports for users working with a supported database
+    pub use super::account::*;
+    pub use super::auth::*;
+    pub use super::errors::*;
+    pub use super::ops::*;
+    pub use super::*;
 }
 
-/// Create databse connection
-#[async_trait]
-pub trait Connect {
-    /// Database connection type
-    type Config;
-    type Pool;
-    type Error: std::error::Error;
-    async fn connect(config: Self::Config) -> DBResult<Self::Pool, Self::Error>;
-}
-
-/// database migrations
-#[async_trait]
-pub trait Migrate {
-    type Error: std::error::Error;
-    async fn migrate<C: GetConnection>(&self) -> DBResult<(), Self::Error>;
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+pub mod dev {
+    //! useful imports for supporting a new database
+    pub use super::prelude::*;
+    pub use async_trait::async_trait;
 }
