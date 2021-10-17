@@ -1,0 +1,13 @@
+{
+  "name": "vanilla",
+  "main": "index.js",
+  "version": "1.0.0",
+  "scripts": {
+    "prod": "yarn run dart-sass",
+    "start": "webpack-dev-server --mode development --progress --color",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "dart-sass": "^1.25.0"
+  }
+}
