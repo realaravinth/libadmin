@@ -1,0 +1,17 @@
+target/
+./database/**/target
+tarpaulin-report.html
+.env
+cobertura.xml
+prod/
+node_modules/
+/static-assets/bundle
+static/cache/bundle
+./templates/**/*.js
+/static-assets/bundle/*
+src/cache_buster_data.json
+coverage
+dist
+assets
+scripts/creds.py
+__pycache__/

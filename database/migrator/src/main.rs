@@ -21,14 +21,14 @@ use sqlx::postgres::PgPoolOptions;
 #[cfg(not(tarpaulin_include))]
 #[actix_rt::main]
 async fn main() {
-    let db_url = env::var("DATABASE_URL").expect("set DATABASE_URL env var");
+    let db_url = env::var("DATABASE_URL").unwrap();
     let db = PgPoolOptions::new()
         .max_connections(2)
         .connect(&db_url)
         .await
         .expect("Unable to form database pool");
 
-    sqlx::migrate!("./database/db-sqlx-postgres/migrations")
+    sqlx::migrate!("../db-sqlx-postgres/migrations/")
         .run(&db)
         .await
         .unwrap();

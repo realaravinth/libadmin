@@ -26,7 +26,7 @@ frontend:
 	@yarn run dart-sass -s compressed templates/main.scss  ./static/cache/bundle/css/main.css
 
 migrate:
-	cargo run --bin tests-migrate
+	cd database/migrator && cargo run
 
 lint: ## Lint codebase
 	cargo fmt -v --all -- --emit files

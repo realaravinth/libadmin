@@ -18,12 +18,9 @@ include = ["./static/", "./templates"]
 name = "libadmin"
 path = "./src/lib.rs"
 
-[[bin]]
-name = "tests-migrate"
-path = "./src/tests-migrate.rs"
-
 [workspace]
 mempers = [ ".", "database/db-core", "database/db-sqlx-postgres"]
+exclude = ["database/migrator"]
 
 [dependencies]
 db-sqlx-postgres = {path = "./database/db-sqlx-postgres"}
