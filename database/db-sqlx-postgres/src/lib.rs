@@ -33,18 +33,16 @@ pub mod prelude {
 
 impl DBOps for Database {}
 #[async_trait]
-impl Connect for Database {
+impl Connect for ConnectionOptions {
     type Error = sqlx::Error;
     type Pool = Database;
-    type Config = ConnectionOptions;
-
-    async fn connect(config: Self::Config) -> DBResult<Self::Pool, Self::Error> {
-        let pool = config
+    async fn connect(self) -> DBResult<Self::Pool, Self::Error> {
+        let pool = self
             .pool_options
-            .connect(&config.url)
+            .connect(&self.url)
             .await
             .map_err(DBError::DBError)?;
-        Ok(Self { pool })
+        Ok(Database { pool })
     }
 }
 

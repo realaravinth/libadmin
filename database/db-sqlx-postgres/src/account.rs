@@ -13,7 +13,7 @@ impl UpdateEmail for Database {
             "UPDATE admin_users set email = $1
         WHERE username = $2",
             &payload.email,
-            &payload.name,
+            &payload.username,
         )
         .execute(&self.pool)
         .await
