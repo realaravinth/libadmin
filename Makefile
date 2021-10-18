@@ -10,10 +10,10 @@ clean:
 	@-rm -rf ./assets
 
 coverage: migrate
-	cargo tarpaulin -t 1200 --out Html
+	cargo tarpaulin --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,. -t 1200 --out Html
 
 doc:
-	cargo doc --no-deps --workspace --all-features
+	cargo doc --no-deps --workspace=database/db-core,database/db-sqlx-postgres,. --all-features
 
 env:
 	cargo fetch
@@ -38,8 +38,8 @@ release: frontend
 run: frontend
 	cargo run
 
-test: frontend
-	cargo test --all-features --no-fail-fast
+test: migrate frontend
+	cargo test --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,.
 
 xml-test-coverage: migrate
-	cargo tarpaulin -t 1200 --out Xml
+	cargo tarpaulin --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,. -t 1200 --out Xml

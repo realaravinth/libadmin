@@ -52,11 +52,6 @@ jobs:
           profile: minimal
           override: true
 
-      - name: check build
-        env:
-          DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
-        run: make
-
       - name: tests
         timeout-minutes: 40
         env:
