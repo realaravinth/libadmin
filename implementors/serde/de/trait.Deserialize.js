@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["libadmin"] = [{"text":"impl&lt;'de&gt; <a class=\"trait\" href=\"https://docs.rs/serde/1.0.130/serde/de/trait.Deserialize.html\" title=\"trait serde::de::Deserialize\">Deserialize</a>&lt;'de&gt; for <a class=\"struct\" href=\"libadmin/struct.Settings.html\" title=\"struct libadmin::Settings\">Settings</a>","synthetic":false,"types":["libadmin::settings::Settings"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

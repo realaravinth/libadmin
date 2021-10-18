@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["DBError","Error data structure grouping various error subtypes"]],"type":[["DBResult","Generic result data structure"]]});

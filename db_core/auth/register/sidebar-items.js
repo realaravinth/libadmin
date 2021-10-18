@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["EmailRegisterPayload","payload to register a user with username and email"],["UsernameRegisterPayload","payload to register a user with only username"]],"trait":[["EmailRegister","register user with username and email"],["Register","Top-level traits group all registration mechanisms"],["UsernameRegister","register with username only"]]});

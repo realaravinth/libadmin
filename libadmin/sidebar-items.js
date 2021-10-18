@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["CACHE_AGE",""],["V1_API_ROUTES",""]],"fn":[["init",""]],"mod":[["assets",""],["demo",""]],"static":[["SETTINGS",""]],"struct":[["CSS",""],["Data","App data"],["FILES",""],["Settings",""]]});
