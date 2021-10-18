@@ -1,4 +1,5 @@
 target/
+./database/**/target
 tarpaulin-report.html
 .env
 cobertura.xml
