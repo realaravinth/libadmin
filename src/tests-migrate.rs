@@ -28,5 +28,8 @@ async fn main() {
         .await
         .expect("Unable to form database pool");
 
-    sqlx::migrate!("./migrations/").run(&db).await.unwrap();
+    sqlx::migrate!("./database/db-sqlx-postgres/migrations")
+        .run(&db)
+        .await
+        .unwrap();
 }
