@@ -84,8 +84,8 @@ pub struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        let allow_registration = false;
-        let allow_demo = false;
+        let allow_registration = true;
+        let allow_demo = true;
         let database = Database::default();
         let server = Server::default();
         Self {

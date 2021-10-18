@@ -17,15 +17,23 @@
 #![deny(missing_docs)]
 //! # `libadmin`
 //! Authentication, session-management and access control mechanism for web servers built in Rust
+use std::sync::Arc;
+use std::thread;
+
+use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
+use db_core::prelude::*;
+use once_cell::sync::OnceCell;
+
 mod api;
 pub mod demo;
 mod errors;
 mod settings;
+#[cfg(test)]
+mod tests;
 
 pub use api::v1::ROUTES as V1_API_ROUTES;
 pub use settings::Settings;
 
-use once_cell::sync::OnceCell;
 /// Settings
 pub static SETTINGS: OnceCell<Settings> = OnceCell::new();
 
@@ -34,14 +42,8 @@ pub const CACHE_AGE: u32 = 604800;
 
 /// load settings
 pub fn init(settings: Settings) {
-    let _ = SETTINGS.set(settings);
+    SETTINGS.get_or_init(|| settings);
 }
-
-use std::sync::Arc;
-use std::thread;
-
-use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
-use db_core::prelude::*;
 
 /// App data
 pub struct Data<T: LibAdminDatabase> {
@@ -65,10 +67,10 @@ impl<T: LibAdminDatabase> Data<T> {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new<V, C, E>(db: V) -> Arc<Self>
+    pub async fn new<V, E>(db: V) -> Arc<Self>
     where
         V: Connect<Pool = T, Error = E>,
-        E: std::fmt::Debug + std::error::Error + std::cmp::PartialEq,
+        E: std::fmt::Debug + std::error::Error,
     {
         //        #[cfg(test)]
         //        crate::tests::init();

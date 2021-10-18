@@ -23,7 +23,7 @@ use derive_more::{Display, Error};
 use url::ParseError;
 use validator::ValidationErrors;
 
-#[derive(Debug, Display, PartialEq, Error)]
+#[derive(Debug, Display, Error)]
 #[cfg(not(tarpaulin_include))]
 /// Error data structure grouping various error subtypes
 pub enum ServiceError {
@@ -142,6 +142,7 @@ impl From<ParseError> for ServiceError {
 impl<E: std::error::Error> From<DBError<E>> for ServiceError {
     fn from(e: DBError<E>) -> Self {
         log::error!("{:?}", e);
+        println!("{:?}", e);
         match e {
             DBError::DBError(_) => ServiceError::InternalServerError,
             DBError::DuplicateEmail => ServiceError::EmailTaken,

@@ -18,6 +18,8 @@
 pub mod account;
 pub mod auth;
 mod routes;
+#[cfg(test)]
+mod tests;
 
 pub use routes::ROUTES;
 
