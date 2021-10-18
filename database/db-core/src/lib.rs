@@ -20,6 +20,8 @@ pub mod account;
 pub mod auth;
 pub mod errors;
 pub mod ops;
+#[cfg(feature = "test")]
+pub mod tests;
 
 pub use ops::GetConnection;
 

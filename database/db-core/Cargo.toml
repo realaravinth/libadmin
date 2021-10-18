@@ -15,3 +15,7 @@ authors = ["realaravinth <realaravinth@batsense.net>"]
 [dependencies]
 async-trait = "0.1.51"
 derive_more = "0.99"
+
+[features]
+default = []
+test = []
