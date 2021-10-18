@@ -16,3 +16,8 @@ include = ["./mgrations/"]
 db-core = {path = "../db-core"}
 sqlx = { version = "0.5.9", features = [ "postgres", "time", "offline" ] }
 async-trait = "0.1.51"
+
+[dev-dependencies]
+actix-rt = "2"
+sqlx = { version = "0.5.5", features = [ "runtime-actix-rustls", "postgres", "time", "offline" ] }
+db-core = {path = "../db-core", features = ["test"]}

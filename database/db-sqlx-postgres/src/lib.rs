@@ -6,6 +6,8 @@ use sqlx::PgPool;
 pub mod account;
 pub mod auth;
 pub mod errors;
+#[cfg(test)]
+pub mod tests;
 
 pub struct Database {
     pub pool: PgPool,
