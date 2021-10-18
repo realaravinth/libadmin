@@ -1,6 +1,6 @@
 <div align="center"><h1>libadmin</h1>
 
-[![Documentation](https://img.shields.io/badge/docs-master-blue)](https://realaravinth.github.io/libadmin/actix_auth_middleware/)
+[![Documentation](https://img.shields.io/badge/docs-master-blue)](https://realaravinth.github.io/libadmin/)
 [![Build](https://github.com/realaravinth/libadmin/actions/workflows/linux.yml/badge.svg)](https://github.com/realaravinth/libadmin/actions/workflows/linux.yml)
 [![codecov](https://codecov.io/gh/realaravinth/libadmin/branch/master/graph/badge.svg?token=TYZXLOOHYQ)](https://codecov.io/gh/realaravinth/libadmin)
 
@@ -19,16 +19,16 @@ complete with access control mechanism and web forms.
 
 ### Database
 
-| crate and documentation                                                                          | description                                                                                                  |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| [![](https://img.shields.io/badge/docs-db--core-orange)](./database/db-core/)                    | Collection of traits describing all `libadmin` database operations. Used to implement support a new database |
-| [![](https://img.shields.io/badge/docs-db--sqlx--postgres-orange)](./database/db-sqlx-postgres/) | Database support for postgres using [`sqlx`](https://crates.io/crates/sqlx)                                  |
+| crate                                             | documentation                                                                                                                 | description                                                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [`db-core`](./database/db-core)                   | [![](https://img.shields.io/badge/docs-db--core-orange)](https://realaravinth.github.io/libadmin/db_core/)                    | Collection of traits describing all `libadmin` database operations. Used to implement support a new database |
+| [`db-sqlx-postgres`](./database/db-sqlx-postgres) | [![](https://img.shields.io/badge/docs-db--sqlx--postgres-orange)](https://realaravinth.github.io/libadmin/db_sqlx_postgres/) | Database support for postgres using [`sqlx`](https://crates.io/crates/sqlx)                                  |
 
 ### Web frameworks
 
-| crate and documentation                                                                     | description                          |
-| ------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [![](https://img.shields.io/badge/docs-libadmin--actix--web-green)](./framework/actix-web/) | `libadmin` implemented for actix-web |
+| crate                                          | documentation                                                                               | description                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [`libadmin-actix-web`](./framework/actix-web/) | [![](https://img.shields.io/badge/docs-libadmin--actix--web-green)](./framework/actix-web/) | `libadmin` implemented for actix-web |
 
 ## Support for database `foo` and framework `bar`
 
