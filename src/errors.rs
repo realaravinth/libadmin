@@ -17,11 +17,6 @@
 
 use std::convert::From;
 
-use actix_web::{
-    error::ResponseError,
-    http::{header, StatusCode},
-    HttpResponse, HttpResponseBuilder,
-};
 use argon2_creds::errors::CredsError;
 use db_core::errors::DBError;
 use derive_more::{Display, Error};
@@ -89,42 +84,34 @@ pub struct ErrorToResponse {
     pub error: String,
 }
 
-#[cfg(not(tarpaulin_include))]
-impl ResponseError for ServiceError {
-    #[cfg(not(tarpaulin_include))]
-    fn error_response(&self) -> HttpResponse {
-        HttpResponseBuilder::new(self.status_code())
-            .append_header((header::CONTENT_TYPE, "application/json; charset=UTF-8"))
-            .body(
-                serde_json::to_string(&ErrorToResponse {
-                    error: self.to_string(),
-                })
-                .unwrap(),
-            )
-    }
+/// HTTP Status code of errors
+pub trait ErrorStatusCode {
+    fn status_code(&self) -> u16;
+}
 
+impl ErrorStatusCode for ServiceError {
     #[cfg(not(tarpaulin_include))]
-    fn status_code(&self) -> StatusCode {
+    fn status_code(&self) -> u16 {
         match self {
-            ServiceError::ClosedForRegistration => StatusCode::FORBIDDEN,
-            ServiceError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-            ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
-            ServiceError::NotAUrl => StatusCode::BAD_REQUEST,
-            ServiceError::NotAnId => StatusCode::BAD_REQUEST,
-            ServiceError::URLTooLong => StatusCode::BAD_REQUEST,
-            ServiceError::WrongPassword => StatusCode::UNAUTHORIZED,
-            ServiceError::AccountNotFound => StatusCode::NOT_FOUND,
+            ServiceError::ClosedForRegistration => 403, //FORBIDDEN,
+            ServiceError::InternalServerError => 500,   // INTERNAL SERVER ERROR
+            ServiceError::NotAnEmail => 400,            //BADREQUEST,
+            ServiceError::NotAUrl => 400,               //BADREQUEST,
+            ServiceError::NotAnId => 400,               //BADREQUEST,
+            ServiceError::URLTooLong => 400,            //BADREQUEST,
+            ServiceError::WrongPassword => 401,         //UNAUTHORIZED,
+            ServiceError::AccountNotFound => 400,       //NOT FOUND,
 
-            ServiceError::ProfainityError => StatusCode::BAD_REQUEST,
-            ServiceError::BlacklistError => StatusCode::BAD_REQUEST,
-            ServiceError::UsernameCaseMappedError => StatusCode::BAD_REQUEST,
+            ServiceError::ProfainityError => 400, //BADREQUEST,
+            ServiceError::BlacklistError => 400,  //BADREQUEST,
+            ServiceError::UsernameCaseMappedError => 400, //BADREQUEST,
 
-            ServiceError::PasswordTooShort => StatusCode::BAD_REQUEST,
-            ServiceError::PasswordTooLong => StatusCode::BAD_REQUEST,
-            ServiceError::PasswordsDontMatch => StatusCode::BAD_REQUEST,
+            ServiceError::PasswordTooShort => 400, //BADREQUEST,
+            ServiceError::PasswordTooLong => 400,  //BADREQUEST,
+            ServiceError::PasswordsDontMatch => 400, //BADREQUEST,
 
-            ServiceError::UsernameTaken => StatusCode::BAD_REQUEST,
-            ServiceError::EmailTaken => StatusCode::BAD_REQUEST,
+            ServiceError::UsernameTaken => 400, //BADREQUEST,
+            ServiceError::EmailTaken => 400,    //BADREQUEST,
         }
     }
 }
@@ -158,8 +145,8 @@ impl From<ParseError> for ServiceError {
     }
 }
 
-impl From<DBError<std::error::Error>> for ServiceError {
-    fn from(e: DBError<std::error::Error>) -> Self {
+impl<E: std::error::Error> From<DBError<E>> for ServiceError {
+    fn from(e: DBError<E>) -> Self {
         log::error!("{:?}", e);
         match e {
             DBError::DBError(_) => ServiceError::InternalServerError,
@@ -189,70 +176,70 @@ impl From<sqlx::Error> for ServiceError {
 #[cfg(not(tarpaulin_include))]
 pub type ServiceResult<V> = std::result::Result<V, ServiceError>;
 
-#[derive(Debug, Display, PartialEq, Error)]
-#[cfg(not(tarpaulin_include))]
-pub enum PageError {
-    #[display(fmt = "Something weng wrong: Internal server error")]
-    InternalServerError,
-
-    #[display(fmt = "{}", _0)]
-    ServiceError(ServiceError),
-}
-
-#[cfg(not(tarpaulin_include))]
-impl From<sqlx::Error> for PageError {
-    #[cfg(not(tarpaulin_include))]
-    fn from(_: sqlx::Error) -> Self {
-        PageError::InternalServerError
-    }
-}
-
-#[cfg(not(tarpaulin_include))]
-impl From<ServiceError> for PageError {
-    #[cfg(not(tarpaulin_include))]
-    fn from(e: ServiceError) -> Self {
-        PageError::ServiceError(e)
-    }
-}
-
-impl ResponseError for PageError {
-    fn error_response(&self) -> HttpResponse {
-        use crate::PAGES;
-        match self.status_code() {
-            StatusCode::INTERNAL_SERVER_ERROR => HttpResponse::Found()
-                .append_header((header::LOCATION, PAGES.errors.internal_server_error))
-                .finish(),
-            _ => HttpResponse::Found()
-                .append_header((header::LOCATION, PAGES.errors.unknown_error))
-                .finish(),
-        }
-    }
-
-    #[cfg(not(tarpaulin_include))]
-    fn status_code(&self) -> StatusCode {
-        match self {
-            PageError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-            PageError::ServiceError(e) => e.status_code(),
-        }
-    }
-}
-
-#[cfg(not(tarpaulin_include))]
-pub type PageResult<V> = std::result::Result<V, PageError>;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::PAGES;
-
-    #[test]
-    fn error_works() {
-        let resp: HttpResponse = PageError::InternalServerError.error_response();
-        assert_eq!(resp.status(), StatusCode::FOUND);
-        let headers = resp.headers();
-        assert_eq!(
-            headers.get(header::LOCATION).unwrap(),
-            PAGES.errors.internal_server_error
-        );
-    }
-}
+//#[derive(Debug, Display, PartialEq, Error)]
+//#[cfg(not(tarpaulin_include))]
+//pub enum PageError {
+//    #[display(fmt = "Something weng wrong: Internal server error")]
+//    InternalServerError,
+//
+//    #[display(fmt = "{}", _0)]
+//    ServiceError(ServiceError),
+//}
+//
+//#[cfg(not(tarpaulin_include))]
+//impl From<sqlx::Error> for PageError {
+//    #[cfg(not(tarpaulin_include))]
+//    fn from(_: sqlx::Error) -> Self {
+//        PageError::InternalServerError
+//    }
+//}
+//
+//#[cfg(not(tarpaulin_include))]
+//impl From<ServiceError> for PageError {
+//    #[cfg(not(tarpaulin_include))]
+//    fn from(e: ServiceError) -> Self {
+//        PageError::ServiceError(e)
+//    }
+//}
+//
+//impl ResponseError for PageError {
+//    fn error_response(&self) -> HttpResponse {
+//        use crate::PAGES;
+//        match self.status_code() {
+//            StatusCode::INTERNAL_SERVER_ERROR => HttpResponse::Found()
+//                .append_header((header::LOCATION, PAGES.errors.internal_server_error))
+//                .finish(),
+//            _ => HttpResponse::Found()
+//                .append_header((header::LOCATION, PAGES.errors.unknown_error))
+//                .finish(),
+//        }
+//    }
+//
+//    #[cfg(not(tarpaulin_include))]
+//    fn status_code(&self) -> StatusCode {
+//        match self {
+//            PageError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+//            PageError::ServiceError(e) => e.status_code(),
+//        }
+//    }
+//}
+//
+//#[cfg(not(tarpaulin_include))]
+//pub type PageResult<V> = std::result::Result<V, PageError>;
+//
+//#[cfg(test)]
+//mod tests {
+//    use super::*;
+//    use crate::PAGES;
+//
+//    #[test]
+//    fn error_works() {
+//        let resp: HttpResponse = PageError::InternalServerError.error_response();
+//        assert_eq!(resp.status(), StatusCode::FOUND);
+//        let headers = resp.headers();
+//        assert_eq!(
+//            headers.get(header::LOCATION).unwrap(),
+//            PAGES.errors.internal_server_error
+//        );
+//    }
+//}

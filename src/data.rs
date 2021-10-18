@@ -22,13 +22,13 @@ use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
 use db_core::prelude::*;
 
 /// App data
-pub struct Data<P: LibAdminDatabase> {
+pub struct Data<T: LibAdminDatabase> {
     /// databse pool
-    pub db: P,
+    pub db: T,
     pub creds: Config,
 }
 
-impl<P: GetConnection> Data<P> {
+impl<T: LibAdminDatabase> Data<T> {
     pub fn get_creds() -> Config {
         ConfigBuilder::default()
             .username_case_mapped(true)
@@ -41,14 +41,15 @@ impl<P: GetConnection> Data<P> {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new<C, E, T>(db: T) -> Arc<Self>
+    pub async fn new<V, C, E>(db: V) -> Arc<Self>
     where
-        T: Connect<Config = C, Pool = P, Error = E>,
+        V: Connect<Pool = T, Error = E>,
+        E: std::fmt::Debug + std::error::Error + std::cmp::PartialEq,
     {
-        #[cfg(test)]
-        crate::tests::init();
+        //        #[cfg(test)]
+        //        crate::tests::init();
 
-        let settings = crate::SETTINGS.get().unwrap();
+        //        let settings = crate::SETTINGS.get().unwrap();
         let creds = Self::get_creds();
         let c = creds.clone();
 

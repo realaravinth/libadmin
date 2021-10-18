@@ -14,20 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use actix_web::web::ServiceConfig;
-use serde::Deserialize;
-use uuid::Uuid;
-
 pub mod account;
 pub mod auth;
 mod routes;
 
 pub use routes::ROUTES;
-
-pub fn services(cfg: &mut ServiceConfig) {
-    auth::services(cfg);
-    account::services(cfg);
-}
 
 pub fn get_random(len: usize) -> String {
     use rand::{distributions::Alphanumeric, rngs::ThreadRng, thread_rng, Rng};
@@ -41,15 +32,3 @@ pub fn get_random(len: usize) -> String {
         .take(len)
         .collect::<String>()
 }
-
-pub fn get_uuid() -> Uuid {
-    Uuid::new_v4()
-}
-
-#[derive(Deserialize)]
-pub struct RedirectQuery {
-    pub redirect_to: Option<String>,
-}
-
-#[cfg(test)]
-mod tests;

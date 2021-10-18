@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use std::borrow::Cow;
-
-use actix_web::body::Body;
-use actix_web::{get, http::header, web, HttpResponse, Responder};
-use log::debug;
-use mime_guess::from_path;
+//use std::borrow::Cow;
+//
+//use log::debug;
+//use mime_guess::from_path;
 use rust_embed::RustEmbed;
 
-use crate::CACHE_AGE;
+//use crate::CACHE_AGE;
 
 pub mod assets {
     use lazy_static::lazy_static;
@@ -50,93 +48,93 @@ pub mod assets {
 #[folder = "assets/"]
 struct Asset;
 
-fn handle_assets(path: &str) -> HttpResponse {
-    match Asset::get(path) {
-        Some(content) => {
-            let body: Body = match content.data {
-                Cow::Borrowed(bytes) => bytes.into(),
-                Cow::Owned(bytes) => bytes.into(),
-            };
+//fn handle_assets(path: &str) -> HttpResponse {
+//    match Asset::get(path) {
+//        Some(content) => {
+//            let body: Body = match content.data {
+//                Cow::Borrowed(bytes) => bytes.into(),
+//                Cow::Owned(bytes) => bytes.into(),
+//            };
+//
+//            HttpResponse::Ok()
+//                .insert_header(header::CacheControl(vec![
+//                    header::CacheDirective::Public,
+//                    header::CacheDirective::Extension("immutable".into(), None),
+//                    header::CacheDirective::MaxAge(CACHE_AGE),
+//                ]))
+//                .content_type(from_path(path).first_or_octet_stream().as_ref())
+//                .body(body)
+//        }
+//        None => HttpResponse::NotFound().body("404 Not Found"),
+//    }
+//}
+//
+//#[get("/assets/{_:.*}")]
+//pub async fn static_files(path: web::Path<String>) -> impl Responder {
+//    handle_assets(&path)
+//}
 
-            HttpResponse::Ok()
-                .insert_header(header::CacheControl(vec![
-                    header::CacheDirective::Public,
-                    header::CacheDirective::Extension("immutable".into(), None),
-                    header::CacheDirective::MaxAge(CACHE_AGE),
-                ]))
-                .content_type(from_path(path).first_or_octet_stream().as_ref())
-                .body(body)
-        }
-        None => HttpResponse::NotFound().body("404 Not Found"),
-    }
-}
-
-#[get("/assets/{_:.*}")]
-pub async fn static_files(path: web::Path<String>) -> impl Responder {
-    handle_assets(&path)
-}
-
-#[derive(RustEmbed)]
-#[folder = "static/favicons/"]
-struct Favicons;
-
-fn handle_favicons(path: &str) -> HttpResponse {
-    match Favicons::get(path) {
-        Some(content) => {
-            let body: Body = match content.data {
-                Cow::Borrowed(bytes) => bytes.into(),
-                Cow::Owned(bytes) => bytes.into(),
-            };
-
-            HttpResponse::Ok()
-                .insert_header(header::CacheControl(vec![
-                    header::CacheDirective::Public,
-                    header::CacheDirective::Extension("immutable".into(), None),
-                    header::CacheDirective::MaxAge(CACHE_AGE),
-                ]))
-                .content_type(from_path(path).first_or_octet_stream().as_ref())
-                .body(body)
-        }
-        None => HttpResponse::NotFound().body("404 Not Found"),
-    }
-}
-
-#[get("/{file}")]
-pub async fn favicons(path: web::Path<String>) -> impl Responder {
-    debug!("searching favicons");
-    handle_favicons(&path)
-}
-
-#[cfg(test)]
-mod tests {
-    use actix_web::http::StatusCode;
-    use actix_web::test;
-
-    use super::*;
-    use crate::*;
-
-    #[actix_rt::test]
-    async fn static_assets_work() {
-        let app = get_app!().await;
-
-        for file in [assets::LOGO.path, *crate::CSS].iter() {
-            let resp =
-                test::call_service(&app, test::TestRequest::get().uri(file).to_request()).await;
-            assert_eq!(resp.status(), StatusCode::OK);
-        }
-    }
-
-    #[actix_rt::test]
-    async fn favicons_work() {
-        assert!(Favicons::get("favicon.ico").is_some());
-
-        let app = get_app!().await;
-
-        let resp = test::call_service(
-            &app,
-            test::TestRequest::get().uri("/favicon.ico").to_request(),
-        )
-        .await;
-        assert_eq!(resp.status(), StatusCode::OK);
-    }
-}
+//#[derive(RustEmbed)]
+//#[folder = "static/favicons/"]
+//struct Favicons;
+//
+//fn handle_favicons(path: &str) -> HttpResponse {
+//    match Favicons::get(path) {
+//        Some(content) => {
+//            let body: Body = match content.data {
+//                Cow::Borrowed(bytes) => bytes.into(),
+//                Cow::Owned(bytes) => bytes.into(),
+//            };
+//
+//            HttpResponse::Ok()
+//                .insert_header(header::CacheControl(vec![
+//                    header::CacheDirective::Public,
+//                    header::CacheDirective::Extension("immutable".into(), None),
+//                    header::CacheDirective::MaxAge(CACHE_AGE),
+//                ]))
+//                .content_type(from_path(path).first_or_octet_stream().as_ref())
+//                .body(body)
+//        }
+//        None => HttpResponse::NotFound().body("404 Not Found"),
+//    }
+//}
+//
+//#[get("/{file}")]
+//pub async fn favicons(path: web::Path<String>) -> impl Responder {
+//    debug!("searching favicons");
+//    handle_favicons(&path)
+//}
+//
+//#[cfg(test)]
+//mod tests {
+//    use actix_web::http::StatusCode;
+//    use actix_web::test;
+//
+//    use super::*;
+//    use crate::*;
+//
+//    #[actix_rt::test]
+//    async fn static_assets_work() {
+//        let app = get_app!().await;
+//
+//        for file in [assets::LOGO.path, *crate::CSS].iter() {
+//            let resp =
+//                test::call_service(&app, test::TestRequest::get().uri(file).to_request()).await;
+//            assert_eq!(resp.status(), StatusCode::OK);
+//        }
+//    }
+//
+//    #[actix_rt::test]
+//    async fn favicons_work() {
+//        assert!(Favicons::get("favicon.ico").is_some());
+//
+//        let app = get_app!().await;
+//
+//        let resp = test::call_service(
+//            &app,
+//            test::TestRequest::get().uri("/favicon.ico").to_request(),
+//        )
+//        .await;
+//        assert_eq!(resp.status(), StatusCode::OK);
+//    }
+//}
