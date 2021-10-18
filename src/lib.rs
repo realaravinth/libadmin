@@ -14,21 +14,82 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#![deny(missing_docs)]
+//! # `libadmin`
+//! Authentication, session-management and access control mechanism for web servers built in Rust
 mod api;
-mod data;
 pub mod demo;
 mod errors;
 mod settings;
 
-pub use crate::data::Data;
 pub use api::v1::ROUTES as V1_API_ROUTES;
 pub use settings::Settings;
 
 use once_cell::sync::OnceCell;
+/// Settings
 pub static SETTINGS: OnceCell<Settings> = OnceCell::new();
 
+/// Default cache age for static assets
 pub const CACHE_AGE: u32 = 604800;
 
+/// load settings
 pub fn init(settings: Settings) {
     let _ = SETTINGS.set(settings);
+}
+
+use std::sync::Arc;
+use std::thread;
+
+use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
+use db_core::prelude::*;
+
+/// App data
+pub struct Data<T: LibAdminDatabase> {
+    /// databse pool
+    pub db: T,
+    /// credential-procession policy
+    pub creds: Config,
+}
+
+impl<T: LibAdminDatabase> Data<T> {
+    /// Get credential-processing policy
+    pub fn get_creds() -> Config {
+        ConfigBuilder::default()
+            .username_case_mapped(true)
+            .profanity(true)
+            .blacklist(true)
+            .password_policy(PasswordPolicy::default())
+            .build()
+            .unwrap()
+    }
+
+    #[cfg(not(tarpaulin_include))]
+    /// create new instance of app data
+    pub async fn new<V, C, E>(db: V) -> Arc<Self>
+    where
+        V: Connect<Pool = T, Error = E>,
+        E: std::fmt::Debug + std::error::Error + std::cmp::PartialEq,
+    {
+        //        #[cfg(test)]
+        //        crate::tests::init();
+
+        let creds = Self::get_creds();
+        let c = creds.clone();
+
+        #[allow(unused_variables)]
+        let init = thread::spawn(move || {
+            log::info!("Initializing credential manager");
+            c.init();
+            log::info!("Initialized credential manager");
+        });
+
+        let db = db.connect().await.unwrap();
+
+        let data = Data { db, creds };
+
+        #[cfg(not(debug_assertions))]
+        init.join().unwrap();
+
+        Arc::new(data)
+    }
 }

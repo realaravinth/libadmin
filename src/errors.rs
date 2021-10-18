@@ -14,18 +14,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+//! represents all the ways a trait can fail using this crate
 use std::convert::From;
 
 use argon2_creds::errors::CredsError;
 use db_core::errors::DBError;
 use derive_more::{Display, Error};
-use serde::{Deserialize, Serialize};
 use url::ParseError;
 use validator::ValidationErrors;
 
 #[derive(Debug, Display, PartialEq, Error)]
 #[cfg(not(tarpaulin_include))]
+/// Error data structure grouping various error subtypes
 pub enum ServiceError {
     #[display(fmt = "internal server error")]
     InternalServerError,
@@ -76,12 +76,6 @@ pub enum ServiceError {
     /// email is already taken
     #[display(fmt = "Email not available")]
     EmailTaken,
-}
-
-#[derive(Serialize, Deserialize)]
-#[cfg(not(tarpaulin_include))]
-pub struct ErrorToResponse {
-    pub error: String,
 }
 
 /// HTTP Status code of errors
@@ -158,21 +152,7 @@ impl<E: std::error::Error> From<DBError<E>> for ServiceError {
     }
 }
 
-#[cfg(not(tarpaulin_include))]
-impl From<sqlx::Error> for ServiceError {
-    #[cfg(not(tarpaulin_include))]
-    fn from(e: sqlx::Error) -> Self {
-        use sqlx::error::Error;
-        use std::borrow::Cow;
-        if let Error::Database(err) = e {
-            if err.code() == Some(Cow::from("23505")) {
-                return ServiceError::UsernameTaken;
-            }
-        }
-        ServiceError::InternalServerError
-    }
-}
-
+/// Generic result data structure
 #[cfg(not(tarpaulin_include))]
 pub type ServiceResult<V> = std::result::Result<V, ServiceError>;
 

@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//! Version 1 API endpoints
 pub mod account;
 pub mod auth;
 mod routes;
 
 pub use routes::ROUTES;
 
-pub fn get_random(len: usize) -> String {
+/// Get random string of specific length
+pub(crate) fn get_random(len: usize) -> String {
     use rand::{distributions::Alphanumeric, rngs::ThreadRng, thread_rng, Rng};
     use std::iter;
 

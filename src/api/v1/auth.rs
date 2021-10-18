@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+//! Authentication helper methods and data structures
 use db_core::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -22,19 +22,28 @@ use super::get_random;
 use crate::errors::*;
 use crate::Data;
 
+/// Register payload
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Register {
+    /// username
     pub username: String,
+    /// password
     pub password: String,
+    /// password confirmation: `password` and `confirm_password` must match
     pub confirm_password: String,
+    /// optional email
     pub email: Option<String>,
 }
 
+/// Login payload
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Login {
     // login accepts both username and email under "username field"
     // TODO update all instances where login is used
+    /// user identifier: either username or email
+    /// an email is detected by checkinf for the existence of `@` character
     pub login: String,
+    /// password
     pub password: String,
 }
 
@@ -44,7 +53,8 @@ pub struct Password {
 }
 
 impl<T: LibAdminDatabase> Data<T> {
-    /// returns Ok(()) when everything checks out and the user is authenticated. Erros otherwise
+    /// Log in method. Returns `Ok(())` when user is authenticated and errors when authentication
+    /// fails
     pub async fn login(&self, payload: &Login) -> ServiceResult<String> {
         use argon2_creds::Config;
 
@@ -58,7 +68,6 @@ impl<T: LibAdminDatabase> Data<T> {
 
         if payload.login.contains('@') {
             let creds = self.db.email_login(&payload.login).await?;
-
             verify(&creds.password, &payload.password)?;
             Ok(creds.username)
         } else {
@@ -68,6 +77,7 @@ impl<T: LibAdminDatabase> Data<T> {
         }
     }
 
+    /// register new user
     pub async fn register(&self, payload: &Register) -> ServiceResult<()> {
         if !crate::SETTINGS.get().unwrap().allow_registration {
             return Err(ServiceError::ClosedForRegistration);
@@ -93,7 +103,7 @@ impl<T: LibAdminDatabase> Data<T> {
                     secret: &secret,
                     username: &username,
                     password: &hash,
-                    email: &email,
+                    email,
                 };
 
                 match self.db.email_register(&db_payload).await {

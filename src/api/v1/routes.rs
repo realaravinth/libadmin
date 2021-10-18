@@ -14,14 +14,22 @@
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+//! V1 API Routes
+
+/// constant [Routes](Routes) instance
 pub const ROUTES: Routes = Routes::new();
 
+/// Authentication routes
 pub struct Auth {
+    /// logout route
     pub logout: &'static str,
+    /// login route
     pub login: &'static str,
+    /// registration route
     pub register: &'static str,
 }
 impl Auth {
+    /// create new instance of Authentication route
     pub const fn new() -> Auth {
         let login = "/api/v1/signin";
         let logout = "/logout";
@@ -34,18 +42,28 @@ impl Auth {
     }
 }
 
+/// Account management routes
 pub struct Account {
+    /// delete account route
     pub delete: &'static str,
+    /// route to check if an email exists
     pub email_exists: &'static str,
+    /// route to fetch account secret
     pub get_secret: &'static str,
+    /// route to update a user's email
     pub update_email: &'static str,
+    ///    route to update password
     pub update_password: &'static str,
+    ///    route to update secret
     pub update_secret: &'static str,
+    ///    route to check if a username is already registered
     pub username_exists: &'static str,
+    ///    route to change username
     pub update_username: &'static str,
 }
 
 impl Account {
+    /// create a new instance of [Account][Account] routes
     pub const fn new() -> Account {
         let get_secret = "/api/v1/account/secret/get";
         let update_secret = "/api/v1/account/secret/update";
@@ -68,12 +86,16 @@ impl Account {
     }
 }
 
+/// Top-level routes data structure for V1 AP1
 pub struct Routes {
+    /// Authentication routes
     pub auth: Auth,
+    /// Account routes
     pub account: Account,
 }
 
 impl Routes {
+    /// create new instance of Routes
     const fn new() -> Routes {
         Routes {
             auth: Auth::new(),

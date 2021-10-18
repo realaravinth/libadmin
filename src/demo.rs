@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//! Demo user: Enable users to try out your application without signing up
 use std::time::Duration;
 
 use tokio::spawn;
@@ -55,6 +56,7 @@ async fn delete_demo_user<T: db_core::LibAdminDatabase>(data: &Data<T>) -> Servi
     Ok(())
 }
 
+/// creates and deletes demo user periodically
 pub async fn run<T: db_core::LibAdminDatabase + 'static>(
     data: Data<T>,
     duration: Duration,

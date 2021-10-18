@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//! Account management utility datastructures and methods
 use db_core::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -23,24 +24,27 @@ use crate::errors::*;
 use crate::Data;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct AccountCheckPayload {
-    pub val: String,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
+/// Data structure used in `*_exists` methods
 pub struct AccountCheckResp {
+    /// set to true if the attribute in question exists
     pub exists: bool,
 }
 
+/// Data structure used to change password of a registered user
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ChangePasswordReqest {
+    /// current password
     pub password: String,
+    /// new password
     pub new_password: String,
+    /// new password confirmation
     pub confirm_new_password: String,
 }
 
+/// Data structure used to reperesent account secret
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Secret {
+    /// account secret
     pub secret: String,
 }
 
@@ -63,6 +67,7 @@ impl<T: LibAdminDatabase> Data<T> {
         Ok(())
     }
 
+    /// check if email exists in database
     pub async fn username_exists(&self, username: &str) -> ServiceResult<AccountCheckResp> {
         let resp = AccountCheckResp {
             exists: self.db.username_exists(username).await?,
@@ -71,7 +76,8 @@ impl<T: LibAdminDatabase> Data<T> {
         Ok(resp)
     }
 
-    pub async fn set_username(
+    /// update username of a registered user
+    pub async fn update_username(
         &self,
         current_username: &str,
         new_username: &str,
@@ -79,7 +85,7 @@ impl<T: LibAdminDatabase> Data<T> {
         let processed_uname = self.creds.username(new_username)?;
 
         let db_payload = UpdateUsernamePayload {
-            old_username: &current_username,
+            old_username: current_username,
             new_username: &processed_uname,
         };
 
@@ -87,6 +93,7 @@ impl<T: LibAdminDatabase> Data<T> {
         Ok(processed_uname)
     }
 
+    /// get account secret of a registered user
     pub async fn get_secret(&self, username: &str) -> ServiceResult<Secret> {
         let secret = Secret {
             secret: self.db.get_secret(username).await?,
@@ -95,12 +102,13 @@ impl<T: LibAdminDatabase> Data<T> {
         Ok(secret)
     }
 
+    /// update account secret of a registered user
     pub async fn update_user_secret(&self, username: &str) -> ServiceResult<String> {
         let mut secret;
         loop {
             secret = get_random(32);
 
-            match self.db.update_secret(&username, &secret).await {
+            match self.db.update_secret(username, &secret).await {
                 Ok(_) => break,
                 Err(DBError::DuplicateSecret) => continue,
                 Err(e) => return Err(e.into()),
@@ -121,13 +129,15 @@ impl<T: LibAdminDatabase> Data<T> {
         }
     }
 
+    /// delete user
     pub async fn delete_user(&self, username: &str, password: &str) -> ServiceResult<()> {
         self.authenticate(username, password).await?;
         self.db.delete_account(username).await?;
         Ok(())
     }
 
-    pub async fn update_password(
+    /// change password
+    pub async fn change_password(
         &self,
         username: &str,
         payload: &ChangePasswordReqest,

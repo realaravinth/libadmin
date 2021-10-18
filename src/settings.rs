@@ -14,23 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//! App settings
 use derive_builder::Builder;
 use serde::Deserialize;
 use url::Url;
 
 use crate::api::v1::get_random;
 
+/// Server data
 #[derive(Debug, Clone, Deserialize, Builder)]
 pub struct Server {
+    /// Domain name of the server
     pub domain: String,
+    /// Used to sign cookies. Provide a randomly generated string of atleast 32 chars long.
     pub cookie_secret: String,
     //    pub proxy_has_tls: bool,
 }
 
+/// Database settings
 #[derive(Debug, Clone, Deserialize, Builder)]
 #[builder(build_fn(validate = "Self::validate"))]
 pub struct Database {
+    /// URL of the database
     pub url: String,
+    /// Pool size: maximum number of connections to open
     pub pool: u32,
 }
 
@@ -62,11 +69,16 @@ impl DatabaseBuilder {
     }
 }
 
+/// Top-level settings data structure
 #[derive(Debug, Clone, Deserialize, Builder)]
 pub struct Settings {
+    /// enable registration
     pub allow_registration: bool,
+    /// enable demo user
     pub allow_demo: bool,
+    /// database configuration
     pub database: Database,
+    /// Domain name and cookie secret
     pub server: Server,
 }
 
