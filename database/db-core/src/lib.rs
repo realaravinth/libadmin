@@ -24,7 +24,10 @@ pub mod ops;
 pub use ops::GetConnection;
 
 /// Top level trait describing all libadmin database operations
-pub trait LibAdminDatabase: ops::DBOps + auth::Auth + account::Account {}
+pub trait LibAdminDatabase:
+    ops::DBOps + auth::Auth + account::Account + std::marker::Send + std::marker::Sync
+{
+}
 
 pub mod prelude {
     //! useful imports for users working with a supported database

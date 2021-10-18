@@ -20,7 +20,7 @@ pub use crate::auth::login::Creds;
 #[derive(Clone, Debug)]
 pub struct UpdateEmailPayload<'a> {
     /// name of the user who's email is to be updated
-    pub name: &'a str,
+    pub username: &'a str,
     /// new email
     pub email: &'a str,
 }

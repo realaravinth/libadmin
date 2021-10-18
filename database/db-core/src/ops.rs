@@ -2,7 +2,7 @@
 use crate::dev::*;
 
 /// Database operations trait(migrations, pool creation and fetching connection from pool)
-pub trait DBOps: GetConnection + Migrate + Connect {}
+pub trait DBOps: GetConnection + Migrate {}
 
 /// Get database connection
 #[async_trait]
@@ -18,14 +18,12 @@ pub trait GetConnection {
 /// Create databse connection
 #[async_trait]
 pub trait Connect {
-    /// database connection type
-    type Config;
     /// database specific pool-type
-    type Pool: GetConnection;
+    type Pool: LibAdminDatabase;
     /// database specific error-type
     type Error: std::error::Error;
     /// create connection pool
-    async fn connect(config: Self::Config) -> DBResult<Self::Pool, Self::Error>;
+    async fn connect(self) -> DBResult<Self::Pool, Self::Error>;
 }
 
 /// database migrations
