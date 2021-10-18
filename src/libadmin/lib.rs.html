@@ -70,6 +70,29 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
 </pre><pre class="rust">
 <span class="comment">/*
  * Copyright (C) 2021  Aravinth Manivannan &lt;realaravinth@batsense.net&gt;
@@ -87,62 +110,85 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
-<span class="kw">use</span> <span class="ident">lazy_static::lazy_static</span>;
-
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="doccomment">//! # `libadmin`</span>
+<span class="doccomment">//! Authentication, session-management and access control mechanism for web servers built in Rust</span>
 <span class="kw">mod</span> <span class="ident">api</span>;
-<span class="kw">mod</span> <span class="ident">data</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">demo</span>;
 <span class="kw">mod</span> <span class="ident">errors</span>;
 <span class="kw">mod</span> <span class="ident">settings</span>;
-<span class="kw">mod</span> <span class="ident">static_assets</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::data::Data</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">api::v1::ROUTES</span> <span class="kw">as</span> <span class="ident">V1_API_ROUTES</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">settings::Settings</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">static_assets::static_files::assets</span>;
-
-<span class="kw">use</span> <span class="ident">static_assets::FileMap</span>;
 
 <span class="kw">use</span> <span class="ident">once_cell::sync::OnceCell</span>;
+<span class="doccomment">/// Settings</span>
 <span class="kw">pub</span> <span class="kw">static</span> <span class="ident">SETTINGS</span>: <span class="ident">OnceCell</span><span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">OnceCell::new</span>();
 
-<span class="macro">lazy_static!</span> {
-    <span class="comment">//pub static ref SETTINGS: Settings = Settings::new().unwrap();</span>
-    <span class="kw">pub</span> <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">FILES</span>: <span class="ident">FileMap</span> <span class="op">=</span> <span class="ident">FileMap::new</span>();
-
-    <span class="kw">pub</span> <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">CSS</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span>
-        <span class="ident">FILES</span>.<span class="ident">get</span>(<span class="string">&quot;./static/cache/bundle/css/main.css&quot;</span>).<span class="ident">unwrap</span>();
-}
-
+<span class="doccomment">/// Default cache age for static assets</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CACHE_AGE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">604800</span>;
 
-<span class="comment">//pub type AppData&lt;T&gt; = actix_web::web::Data&lt;Arc&lt;crate::data::Data&lt;T&gt;&gt;&gt;;</span>
-
+<span class="doccomment">/// load settings</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">settings</span>: <span class="ident">Settings</span>) {
     <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">SETTINGS</span>.<span class="ident">set</span>(<span class="ident">settings</span>);
 }
 
-<span class="comment">//#[cfg(not(tarpaulin_include))]</span>
-<span class="comment">//pub fn get_json_err() -&gt; JsonConfig {</span>
-<span class="comment">//    JsonConfig::default().error_handler(|err, _| {</span>
-<span class="comment">//        log::debug!(&quot;JSON deserialization error: {:?}&quot;, &amp;err);</span>
-<span class="comment">//        InternalError::new(err, StatusCode::BAD_REQUEST).into()</span>
-<span class="comment">//    })</span>
-<span class="comment">//}</span>
-<span class="comment">//</span>
-<span class="comment">//#[cfg(not(tarpaulin_include))]</span>
-<span class="comment">//pub fn get_identity_service() -&gt; IdentityService&lt;CookieIdentityPolicy&gt; {</span>
-<span class="comment">//    let settings = SETTINGS.get().unwrap();</span>
-<span class="comment">//    let cookie_secret = &amp;settings.server.cookie_secret;</span>
-<span class="comment">//    IdentityService::new(</span>
-<span class="comment">//        CookieIdentityPolicy::new(cookie_secret.as_bytes())</span>
-<span class="comment">//            .name(&quot;Authorization&quot;)</span>
-<span class="comment">//            //TODO change cookie age</span>
-<span class="comment">//            .max_age_secs(216000)</span>
-<span class="comment">//            .domain(&amp;settings.server.domain)</span>
-<span class="comment">//            .secure(false),</span>
-<span class="comment">//    )</span>
-<span class="comment">//}</span>
+<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">std::thread</span>;
+
+<span class="kw">use</span> <span class="ident">argon2_creds</span>::{<span class="ident">Config</span>, <span class="ident">ConfigBuilder</span>, <span class="ident">PasswordPolicy</span>};
+<span class="kw">use</span> <span class="ident">db_core::prelude</span>::<span class="kw-2">*</span>;
+
+<span class="doccomment">/// App data</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Data</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">LibAdminDatabase</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// databse pool</span>
+    <span class="kw">pub</span> <span class="ident">db</span>: <span class="ident">T</span>,
+    <span class="doccomment">/// credential-procession policy</span>
+    <span class="kw">pub</span> <span class="ident">creds</span>: <span class="ident">Config</span>,
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">LibAdminDatabase</span><span class="op">&gt;</span> <span class="ident">Data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Get credential-processing policy</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_creds</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Config</span> {
+        <span class="ident">ConfigBuilder::default</span>()
+            .<span class="ident">username_case_mapped</span>(<span class="bool-val">true</span>)
+            .<span class="ident">profanity</span>(<span class="bool-val">true</span>)
+            .<span class="ident">blacklist</span>(<span class="bool-val">true</span>)
+            .<span class="ident">password_policy</span>(<span class="ident">PasswordPolicy::default</span>())
+            .<span class="ident">build</span>()
+            .<span class="ident">unwrap</span>()
+    }
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">tarpaulin_include</span>))]</span>
+    <span class="doccomment">/// create new instance of app data</span>
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">C</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">db</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">V</span>: <span class="ident">Connect</span><span class="op">&lt;</span><span class="ident">Pool</span> <span class="op">=</span> <span class="ident">T</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">E</span><span class="op">&gt;</span>,
+        <span class="ident">E</span>: <span class="ident">std::fmt::Debug</span> <span class="op">+</span> <span class="ident">std::error::Error</span> <span class="op">+</span> <span class="ident">std::cmp::PartialEq</span>,
+    {
+        <span class="comment">//        #[cfg(test)]</span>
+        <span class="comment">//        crate::tests::init();</span>
+
+        <span class="kw">let</span> <span class="ident">creds</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::get_creds</span>();
+        <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">creds</span>.<span class="ident">clone</span>();
+
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_variables</span>)]</span>
+        <span class="kw">let</span> <span class="ident">init</span> <span class="op">=</span> <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
+            <span class="macro">log::info!</span>(<span class="string">&quot;Initializing credential manager&quot;</span>);
+            <span class="ident">c</span>.<span class="ident">init</span>();
+            <span class="macro">log::info!</span>(<span class="string">&quot;Initialized credential manager&quot;</span>);
+        });
+
+        <span class="kw">let</span> <span class="ident">db</span> <span class="op">=</span> <span class="ident">db</span>.<span class="ident">connect</span>().<span class="kw">await</span>.<span class="ident">unwrap</span>();
+
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">Data</span> { <span class="ident">db</span>, <span class="ident">creds</span> };
+
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">debug_assertions</span>))]</span>
+        <span class="ident">init</span>.<span class="ident">join</span>().<span class="ident">unwrap</span>();
+
+        <span class="ident">Arc::new</span>(<span class="ident">data</span>)
+    }
+}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="libadmin" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
