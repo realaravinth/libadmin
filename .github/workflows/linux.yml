@@ -55,7 +55,7 @@ jobs:
       - name: load env
         run: |
           source .env-sample \
-            && echo "POSTGRES_DATABASE_URL=$POSTGRES_DATABASE_URL" >> $GITHUB_ENV &&  \
+            && echo "POSTGRES_DATABASE_URL=$POSTGRES_DATABASE_URL" >> $GITHUB_ENV \
             && echo "SQLITE_DATABASE_URL=$SQLITE_DATABASE_URL" >> $GITHUB_ENV
 
       - name: run migrations
