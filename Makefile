@@ -13,7 +13,7 @@ coverage: migrate
 	cargo tarpaulin -t 1200 --out Html --skip-clean --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,database/db-sqlx-sqlite,.
 #
 doc:
-	cargo doc --no-deps --workspace=database/db-core,database/db-sqlx-postgres,. --all-features
+	cargo doc --no-deps --workspace=database/db-core,database/db-sqlx-postgres,database/db-sqlx-sqlite. --all-features
 
 env:
 	cargo fetch
