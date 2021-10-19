@@ -5,7 +5,7 @@ use std::env;
 
 pub mod sqlx_postgres {
     use super::*;
-    use db_sqlx_postgres::ConnectionOptions;
+    use db_sqlx_postgres::{ConnectionOptions, Fresh};
     use sqlx::postgres::PgPoolOptions;
 
     pub async fn get_data() -> Arc<Data> {
@@ -13,7 +13,7 @@ pub mod sqlx_postgres {
         let mut settings = Settings::default();
         settings.database.url = url.clone();
         let pool_options = PgPoolOptions::new().max_connections(2);
-        let connection_options = ConnectionOptions { pool_options, url };
+        let connection_options = ConnectionOptions::Fresh(Fresh { pool_options, url });
 
         return Data::new(connection_options, settings).await;
     }
@@ -21,7 +21,7 @@ pub mod sqlx_postgres {
 
 pub mod sqlx_sqlite {
     use super::*;
-    use db_sqlx_sqlite::ConnectionOptions;
+    use db_sqlx_sqlite::{ConnectionOptions, Fresh};
     use sqlx::sqlite::SqlitePoolOptions;
 
     pub async fn get_data() -> Arc<Data> {
@@ -30,7 +30,7 @@ pub mod sqlx_sqlite {
         settings.database.url = url.clone();
 
         let pool_options = SqlitePoolOptions::new().max_connections(2);
-        let connection_options = ConnectionOptions { pool_options, url };
+        let connection_options = ConnectionOptions::Fresh(Fresh { pool_options, url });
 
         return Data::new(connection_options, settings).await;
     }
