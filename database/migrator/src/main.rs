@@ -16,12 +16,20 @@
  */
 use std::env;
 
+use sqlx::migrate::MigrateDatabase;
 use sqlx::postgres::PgPoolOptions;
+use sqlx::sqlite::SqlitePoolOptions;
+use sqlx::Sqlite;
 
 #[cfg(not(tarpaulin_include))]
 #[actix_rt::main]
 async fn main() {
-    let db_url = env::var("DATABASE_URL").unwrap();
+    postgres_migrate().await;
+    sqlite_migrate().await;
+}
+
+async fn postgres_migrate() {
+    let db_url = env::var("POSTGRES_DATABASE_URL").expect("set POSTGRES_DATABASE_URL env var");
     let db = PgPoolOptions::new()
         .max_connections(2)
         .connect(&db_url)
@@ -29,6 +37,25 @@ async fn main() {
         .expect("Unable to form database pool");
 
     sqlx::migrate!("../db-sqlx-postgres/migrations/")
+        .run(&db)
+        .await
+        .unwrap();
+}
+
+async fn sqlite_migrate() {
+    let db_url = env::var("SQLITE_DATABASE_URL").expect("Set SQLITE_DATABASE_URL env var");
+
+    if !matches!(Sqlite::database_exists(&db_url).await, Ok(true)) {
+        Sqlite::create_database(&db_url).await.unwrap();
+    }
+
+    let db = SqlitePoolOptions::new()
+        .max_connections(2)
+        .connect(&db_url)
+        .await
+        .expect("Unable to form database pool");
+
+    sqlx::migrate!("../db-sqlx-sqlite/migrations/")
         .run(&db)
         .await
         .unwrap();

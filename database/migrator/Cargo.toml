@@ -5,6 +5,8 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+
 [dependencies]
-sqlx = { version = "0.5.5", features = [ "runtime-actix-rustls", "postgres", "time", "offline" ] }
+sqlx = { version = "0.5.5", features = [ "runtime-actix-rustls", "sqlite", "postgres", "time", "offline" ] }
 actix-rt = "2"
