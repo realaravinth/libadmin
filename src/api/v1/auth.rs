@@ -48,7 +48,9 @@ pub struct Login {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+/// struct used to represent password
 pub struct Password {
+    /// password
     pub password: String,
 }
 

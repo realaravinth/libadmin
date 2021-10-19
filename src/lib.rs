@@ -23,9 +23,9 @@ use std::thread;
 use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
 use db_core::prelude::*;
 
-mod api;
+pub mod api;
 pub mod demo;
-mod errors;
+pub mod errors;
 mod settings;
 #[cfg(test)]
 mod tests;

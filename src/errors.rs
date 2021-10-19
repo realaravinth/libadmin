@@ -27,26 +27,34 @@ use validator::ValidationErrors;
 #[cfg(not(tarpaulin_include))]
 /// Error data structure grouping various error subtypes
 pub enum ServiceError {
+    /// All non-specific errors are grouped under this category
     #[display(fmt = "internal server error")]
     InternalServerError,
 
     #[display(
         fmt = "This server is is closed for registration. Contact admin if this is unexpecter"
     )]
+    /// registration failure, server is is closed for registration
     ClosedForRegistration,
 
     #[display(fmt = "The value you entered for email is not an email")] //405j
+    /// The value you entered for email is not an email"
     NotAnEmail,
     #[display(fmt = "The value you entered for URL is not a URL")] //405j
+    /// The value you entered for url is not url"
     NotAUrl,
     #[display(fmt = "The value you entered for ID is not a valid ID")] //405j
+    /// The value you entered for ID is not a valid ID
     NotAnId,
     #[display(fmt = "URL too long, maximum length can't be greater then 2048 characters")] //405
+    /// URL too long, maximum length can't be greater then 2048 characters
     URLTooLong,
 
     #[display(fmt = "Wrong password")]
+    /// wrong password
     WrongPassword,
     #[display(fmt = "Account not found")]
+    /// account not found
     AccountNotFound,
 
     /// when the value passed contains profainity
@@ -63,10 +71,13 @@ pub enum ServiceError {
     UsernameCaseMappedError,
 
     #[display(fmt = "Passsword too short")]
+    /// password too short
     PasswordTooShort,
-    #[display(fmt = "Username too long")]
+    #[display(fmt = "password too long")]
+    /// password too long
     PasswordTooLong,
     #[display(fmt = "Passwords don't match")]
+    /// passwords don't match
     PasswordsDontMatch,
 
     /// when the a username is already taken
@@ -80,6 +91,7 @@ pub enum ServiceError {
 
 /// HTTP Status code of errors
 pub trait ErrorStatusCode {
+    /// get HTTP status code of errors defined in libadmin
     fn status_code(&self) -> u16;
 }
 
