@@ -11,6 +11,7 @@ pub async fn email_register_works<T: LibAdminDatabase>(
     username2: &str,
 ) {
     let _ = db.delete_account(username).await;
+    let _ = db.delete_account(username2).await;
 
     assert!(matches!(
         db.email_login(email).await.err(),
