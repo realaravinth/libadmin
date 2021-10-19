@@ -10,9 +10,8 @@ pub trait GetConnection {
     /// database connection type
     type Conn;
     /// database specific error-type
-    type Error: std::error::Error;
     /// get connection from connection pool
-    async fn get_conn(&self) -> DBResult<Self::Conn, Self::Error>;
+    async fn get_conn(&self) -> DBResult<Self::Conn>;
 }
 
 /// Create databse connection
@@ -21,16 +20,14 @@ pub trait Connect {
     /// database specific pool-type
     type Pool: LibAdminDatabase;
     /// database specific error-type
-    type Error: std::error::Error;
     /// create connection pool
-    async fn connect(self) -> DBResult<Self::Pool, Self::Error>;
+    async fn connect(self) -> DBResult<Self::Pool>;
 }
 
 /// database migrations
 #[async_trait]
-pub trait Migrate: GetConnection {
+pub trait Migrate: LibAdminDatabase {
     /// database specific error-type
-    type Error: std::error::Error;
     /// run migrations
-    async fn migrate(&self) -> DBResult<(), <Self as Migrate>::Error>;
+    async fn migrate(&self) -> DBResult<()>;
 }

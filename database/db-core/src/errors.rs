@@ -1,14 +1,9 @@
 //! represents all the ways a trait can fail using this crate
-use std::error::Error;
-
 use derive_more::{Display, Error as DeriveError};
 
 /// Error data structure grouping various error subtypes
-#[derive(Debug, Display, PartialEq, DeriveError)]
-pub enum DBError<DB>
-where
-    DB: Error,
-{
+#[derive(Debug, Display, DeriveError)]
+pub enum DBError {
     /// username is already taken
     #[display(fmt = "Username not available")]
     DuplicateUsername,
@@ -27,8 +22,8 @@ where
 
     /// errors that are specific to a database implementation
     #[display(fmt = "Database error: {:?}", _0)]
-    DBError(DB),
+    DBError(#[error(not(source))] String),
 }
 
 /// Generic result data structure
-pub type DBResult<V, E> = std::result::Result<V, DBError<E>>;
+pub type DBResult<V> = std::result::Result<V, DBError>;
