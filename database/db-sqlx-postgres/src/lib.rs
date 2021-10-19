@@ -2,6 +2,7 @@
 //! # `libadmin` database operations implemented using sqlx postgres
 //!
 //! [`LibAdminDatabase`](LibAdminDatabase) is implemented on [Database].
+
 use db_core::dev::*;
 
 use sqlx::postgres::PgPoolOptions;
@@ -18,8 +19,19 @@ pub struct Database {
     pub pool: PgPool,
 }
 
-/// Configure database pool
-pub struct ConnectionOptions {
+/// Use an existing database pool
+pub struct Conn(pub PgPool);
+
+/// Connect to databse
+pub enum ConnectionOptions {
+    /// fresh connection
+    Fresh(Fresh),
+    /// existing connection
+    Existing(Conn),
+}
+
+/// Create a new database pool
+pub struct Fresh {
     /// Pool options
     pub pool_options: PgPoolOptions,
     /// database URL
@@ -40,7 +52,6 @@ pub mod prelude {
     pub use super::*;
     pub use db_core::prelude::*;
 }
-
 use dev::*;
 
 #[async_trait]
@@ -48,11 +59,14 @@ impl Connect for ConnectionOptions {
     type Pool = Database;
     /// create connection pool
     async fn connect(self) -> DBResult<Self::Pool> {
-        let pool = self
-            .pool_options
-            .connect(&self.url)
-            .await
-            .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+        let pool = match self {
+            Self::Fresh(fresh) => fresh
+                .pool_options
+                .connect(&fresh.url)
+                .await
+                .map_err(|e| DBError::DBError(format!("{:?}", e)))?,
+            Self::Existing(conn) => conn.0,
+        };
         Ok(Database { pool })
     }
 }
