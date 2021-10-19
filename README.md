@@ -23,6 +23,7 @@ complete with access control mechanism and web forms.
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [`db-core`](./database/db-core)                   | [![](https://img.shields.io/badge/docs-db--core-orange)](https://realaravinth.github.io/libadmin/db_core/)                    | Collection of traits describing all `libadmin` database operations. Used to implement support a new database |
 | [`db-sqlx-postgres`](./database/db-sqlx-postgres) | [![](https://img.shields.io/badge/docs-db--sqlx--postgres-orange)](https://realaravinth.github.io/libadmin/db_sqlx_postgres/) | Database support for postgres using [`sqlx`](https://crates.io/crates/sqlx)                                  |
+| [`db-sqlx-sqlite`](./database/db-sqlx-sqlite)     | [![](https://img.shields.io/badge/docs-db--sqlx--sqlite-orange)](https://realaravinth.github.io/libadmin/db_sqlx_sqlite/)     | Database support for postgres using [`sqlx`](https://crates.io/crates/sqlx)                                  |
 
 ### Web frameworks
 
