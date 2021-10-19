@@ -241,11 +241,26 @@
 <span id="241">241</span>
 <span id="242">242</span>
 <span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
 <span class="doccomment">//! # `libadmin` database operations implemented using sqlx postgres</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! [`LibAdminDatabase`](LibAdminDatabase) is implemented on [Database].</span>
+
 <span class="kw">use</span> <span class="ident">db_core::dev</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident">sqlx::postgres::PgPoolOptions</span>;
@@ -262,8 +277,19 @@
     <span class="kw">pub</span> <span class="ident">pool</span>: <span class="ident">PgPool</span>,
 }
 
-<span class="doccomment">/// Configure database pool</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ConnectionOptions</span> {
+<span class="doccomment">/// Use an existing database pool</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Conn</span>(<span class="kw">pub</span> <span class="ident">PgPool</span>);
+
+<span class="doccomment">/// Connect to databse</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ConnectionOptions</span> {
+    <span class="doccomment">/// fresh connection</span>
+    <span class="ident">Fresh</span>(<span class="ident">Fresh</span>),
+    <span class="doccomment">/// existing connection</span>
+    <span class="ident">Existing</span>(<span class="ident">Conn</span>),
+}
+
+<span class="doccomment">/// Create a new database pool</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Fresh</span> {
     <span class="doccomment">/// Pool options</span>
     <span class="kw">pub</span> <span class="ident">pool_options</span>: <span class="ident">PgPoolOptions</span>,
     <span class="doccomment">/// database URL</span>
@@ -284,7 +310,6 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">db_core::prelude</span>::<span class="kw-2">*</span>;
 }
-
 <span class="kw">use</span> <span class="ident">dev</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">async_trait</span>]</span>
@@ -292,11 +317,14 @@
     <span class="kw">type</span> <span class="ident">Pool</span> <span class="op">=</span> <span class="ident">Database</span>;
     <span class="doccomment">/// create connection pool</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Pool</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="self">self</span>
-            .<span class="ident">pool_options</span>
-            .<span class="ident">connect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">url</span>)
-            .<span class="kw">await</span>
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">DBError::DBError</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>)))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span> {
+            <span class="self">Self</span><span class="ident">::Fresh</span>(<span class="ident">fresh</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">fresh</span>
+                .<span class="ident">pool_options</span>
+                .<span class="ident">connect</span>(<span class="kw-2">&amp;</span><span class="ident">fresh</span>.<span class="ident">url</span>)
+                .<span class="kw">await</span>
+                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">DBError::DBError</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>)))<span class="question-mark">?</span>,
+            <span class="self">Self</span><span class="ident">::Existing</span>(<span class="ident">conn</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">conn</span>.<span class="number">0</span>,
+        };
         <span class="prelude-val">Ok</span>(<span class="ident">Database</span> { <span class="ident">pool</span> })
     }
 }
