@@ -31,9 +31,6 @@
 <span id="31">31</span>
 <span id="32">32</span>
 <span id="33">33</span>
-<span id="34">34</span>
-<span id="35">35</span>
-<span id="36">36</span>
 </pre><pre class="rust">
 <span class="doccomment">//! meta operations like migration and connecting to a database</span>
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::dev</span>::<span class="kw-2">*</span>;
@@ -47,9 +44,8 @@
     <span class="doccomment">/// database connection type</span>
     <span class="kw">type</span> <span class="ident">Conn</span>;
     <span class="doccomment">/// database specific error-type</span>
-    <span class="kw">type</span> <span class="ident">Error</span>: <span class="ident">std::error::Error</span>;
     <span class="doccomment">/// get connection from connection pool</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_conn</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Conn</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_conn</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Conn</span><span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// Create databse connection</span>
@@ -58,18 +54,16 @@
     <span class="doccomment">/// database specific pool-type</span>
     <span class="kw">type</span> <span class="ident">Pool</span>: <span class="ident">LibAdminDatabase</span>;
     <span class="doccomment">/// database specific error-type</span>
-    <span class="kw">type</span> <span class="ident">Error</span>: <span class="ident">std::error::Error</span>;
     <span class="doccomment">/// create connection pool</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Pool</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Pool</span><span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// database migrations</span>
 <span class="attribute">#[<span class="ident">async_trait</span>]</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Migrate</span>: <span class="ident">GetConnection</span> {
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Migrate</span>: <span class="ident">LibAdminDatabase</span> {
     <span class="doccomment">/// database specific error-type</span>
-    <span class="kw">type</span> <span class="ident">Error</span>: <span class="ident">std::error::Error</span>;
     <span class="doccomment">/// run migrations</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">migrate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>(), <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Migrate</span><span class="op">&gt;</span><span class="ident">::Error</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">migrate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="db_core" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>

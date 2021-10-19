@@ -191,7 +191,7 @@
     <span class="kw">pub</span> <span class="ident">password</span>: <span class="ident">String</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">LibAdminDatabase</span><span class="op">&gt;</span> <span class="ident">Data</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">Data</span> {
     <span class="doccomment">/// Log in method. Returns `Ok(())` when user is authenticated and errors when authentication</span>
     <span class="doccomment">/// fails</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">login</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Login</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ServiceResult</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {

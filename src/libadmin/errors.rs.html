@@ -390,8 +390,8 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">std::error::Error</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">DBError</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ServiceError</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">DBError</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">DBError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ServiceError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">DBError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">log::error!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>);
         <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>);
         <span class="kw">match</span> <span class="ident">e</span> {

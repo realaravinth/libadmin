@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Creds","data structure describing credentials of a user"],["Password","data structure containing only a password field"]],"trait":[["EmailLogin","Login using email as user-identifier"],["Login","Top-level trait grouping different login mechanisms"],["UsernameLogin","Login using username as user-identifier"]]});

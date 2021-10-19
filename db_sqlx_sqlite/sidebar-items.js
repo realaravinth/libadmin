@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["account",""],["auth","Authentication and registration operations"],["dev",""],["errors",""],["prelude",""]],"struct":[["ConnectionOptions",""],["Database",""]]});
+initSidebarItems({"mod":[["dev",""],["errors",""],["prelude",""]],"struct":[["ConnectionOptions",""],["Database",""]]});

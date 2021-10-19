@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["DEMO_PASSWORD","Demo password"],["DEMO_USER","Demo username"]],"fn":[["run","creates and deletes demo user periodically"]]});
