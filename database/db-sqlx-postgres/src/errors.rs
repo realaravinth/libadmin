@@ -5,7 +5,7 @@ use db_core::dev::*;
 use sqlx::Error;
 
 /// map postgres errors to [DBError](DBError) types
-pub fn map_register_err(e: Error) -> DBError<Error> {
+pub fn map_register_err(e: Error) -> DBError {
     if let Error::Database(err) = e {
         if err.code() == Some(Cow::from("23505")) {
             let msg = err.message();
@@ -16,12 +16,12 @@ pub fn map_register_err(e: Error) -> DBError<Error> {
             } else if msg.contains("admin_users_secret_key") {
                 DBError::DuplicateSecret
             } else {
-                DBError::DBError(Error::Database(err).into())
+                DBError::DBError(format!("{:?}", Error::Database(err)))
             }
         } else {
-            DBError::DBError(Error::Database(err).into())
+            DBError::DBError(format!("{:?}", Error::Database(err)))
         }
     } else {
-        DBError::DBError(e)
+        DBError::DBError(format!("{:?}", e))
     }
 }
