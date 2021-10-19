@@ -44,18 +44,24 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: load env
+        run: |
+          source .env-sample \
+            && echo "POSTGRES_DATABASE_URL=$POSTGRES_DATABASE_URL" >> $GITHUB_ENV &&  \
+            && echo "SQLITE_DATABASE_URL=$SQLITE_DATABASE_URL" >> $GITHUB_ENV
+
       - name: run migrations
         run: make migrate
         env:
-          POSTGRES_DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
-          SQLITE_DATABASE_URL: sqlite:../../tmp/admin.db
+          POSTGRES_DATABASE_URL: "${{ env.POSTGRES_DATABASE_URL }}"
+          SQLITE_DATABASE_URL: "${{ env.SQLITE_DATABASE_URL }}"
 
       - name: Generate coverage file
         if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         uses: actions-rs/tarpaulin@v0.1
         env:
-          POSTGRES_DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
-          SQLITE_DATABASE_URL: sqlite:../../tmp/admin.db
+          POSTGRES_DATABASE_URL: "${{ env.POSTGRES_DATABASE_URL }}"
+          SQLITE_DATABASE_URL: "${{ env.SQLITE_DATABASE_URL }}"
         with:
           version: '0.18.2'
           args: "--all-features --no-fail-fast --workspace=database/db-sqlx-postgres,. -t 1200"
