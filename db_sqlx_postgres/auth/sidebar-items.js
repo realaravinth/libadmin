@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["login",""],["register",""]]});
+initSidebarItems({"mod":[["login","Login mechanisms and datastructures"],["register","registration operations"]]});

@@ -68,7 +68,26 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><pre class="rust">
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="doccomment">//! # `libadmin` database operations implemented using sqlx postgres</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [`LibAdminDatabase`](LibAdminDatabase) is implemented on [Database].</span>
 <span class="kw">use</span> <span class="ident">db_core::dev</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident">sqlx::postgres::PgPoolOptions</span>;
@@ -76,22 +95,29 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">account</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">auth</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">errors</span>;
+<span class="kw">mod</span> <span class="ident">errors</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tests</span>;
 
+<span class="doccomment">/// Database pool. All database functionallity(`libadmin` traits) are implemented on this</span>
+<span class="doccomment">/// data structure</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Database</span> {
+    <span class="doccomment">/// database pool</span>
     <span class="kw">pub</span> <span class="ident">pool</span>: <span class="ident">PgPool</span>,
 }
 
+<span class="doccomment">/// Configure database pool</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ConnectionOptions</span> {
+    <span class="doccomment">/// Pool options</span>
     <span class="kw">pub</span> <span class="ident">pool_options</span>: <span class="ident">PgPoolOptions</span>,
+    <span class="doccomment">/// database URL</span>
     <span class="kw">pub</span> <span class="ident">url</span>: <span class="ident">String</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">LibAdminDatabase</span> <span class="kw">for</span> <span class="ident">Database</span> {}
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">dev</span> {
+    <span class="doccomment">//! useful imports for supporting a new database</span>
     <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::errors</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::Database</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">db_core::dev</span>::<span class="kw-2">*</span>;
@@ -100,15 +126,18 @@
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prelude</span> {
+    <span class="doccomment">//! useful imports for users working with a supported database</span>
     <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">db_core::prelude</span>::<span class="kw-2">*</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">DBOps</span> <span class="kw">for</span> <span class="ident">Database</span> {}
+
 <span class="attribute">#[<span class="ident">async_trait</span>]</span>
 <span class="kw">impl</span> <span class="ident">Connect</span> <span class="kw">for</span> <span class="ident">ConnectionOptions</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sqlx::Error</span>;
     <span class="kw">type</span> <span class="ident">Pool</span> <span class="op">=</span> <span class="ident">Database</span>;
+    <span class="doccomment">/// create connection pool</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Pool</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pool_options</span>
@@ -123,6 +152,7 @@
 <span class="kw">impl</span> <span class="ident">GetConnection</span> <span class="kw">for</span> <span class="ident">Database</span> {
     <span class="kw">type</span> <span class="ident">Conn</span> <span class="op">=</span> <span class="ident">PgPool</span>;
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sqlx::Error</span>;
+    <span class="doccomment">/// get connection from connection pool</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_conn</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Conn</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">pool</span>.<span class="ident">clone</span>())
     }
