@@ -11,7 +11,18 @@ pub struct Database {
     pub pool: SqlitePool,
 }
 
-pub struct ConnectionOptions {
+/// Use an existing database pool
+pub struct Conn(pub SqlitePool);
+
+/// Connect to databse
+pub enum ConnectionOptions {
+    /// fresh connection
+    Fresh(Fresh),
+    /// existing connection
+    Existing(Conn),
+}
+
+pub struct Fresh {
     pub pool_options: SqlitePoolOptions,
     pub url: String,
 }
@@ -33,11 +44,14 @@ pub mod prelude {
 impl Connect for ConnectionOptions {
     type Pool = Database;
     async fn connect(self) -> DBResult<Self::Pool> {
-        let pool = self
-            .pool_options
-            .connect(&self.url)
-            .await
-            .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+        let pool = match self {
+            Self::Fresh(fresh) => fresh
+                .pool_options
+                .connect(&fresh.url)
+                .await
+                .map_err(|e| DBError::DBError(format!("{:?}", e)))?,
+            Self::Existing(conn) => conn.0,
+        };
         Ok(Database { pool })
     }
 }

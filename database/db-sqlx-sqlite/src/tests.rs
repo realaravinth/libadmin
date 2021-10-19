@@ -24,7 +24,7 @@ async fn everyting_works() {
 
     let url = env::var("SQLITE_DATABASE_URL").expect("Set SQLITE_DATABASE_URL env var");
     let pool_options = SqlitePoolOptions::new().max_connections(2);
-    let connection_options = ConnectionOptions { pool_options, url };
+    let connection_options = ConnectionOptions::Fresh(Fresh { pool_options, url });
     let db = connection_options.connect().await.unwrap();
 
     db.migrate().await.unwrap();
