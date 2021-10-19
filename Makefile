@@ -10,8 +10,8 @@ clean:
 	@-rm -rf ./assets
 
 coverage: migrate
-	cargo tarpaulin --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,. -t 1200 --out Html
-
+	cargo tarpaulin -t 1200 --out Html --skip-clean --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,database/db-sqlx-sqlite,.
+#
 doc:
 	cargo doc --no-deps --workspace=database/db-core,database/db-sqlx-postgres,. --all-features
 
@@ -26,6 +26,7 @@ frontend:
 	@yarn run dart-sass -s compressed templates/main.scss  ./static/cache/bundle/css/main.css
 
 migrate:
+	@-rm -rf database/db-sqlx-sqlite/tmp && mkdir database/db-sqlx-sqlite/tmp
 	cd database/migrator && cargo run
 
 lint: ## Lint codebase
@@ -39,7 +40,9 @@ run: frontend
 	cargo run
 
 test: migrate frontend
-	cargo test --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,.
+	cd database/db-sqlx-postgres && DATABASE_URL=${POSTGRES_DATABASE_URL} cargo test --no-fail-fast
+	cd database/db-sqlx-sqlite && DATABASE_URL=${SQLITE_DATABASE_URL} cargo test --no-fail-fast
+	cargo test --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,database/db-sqlx-sqlite,.
 
 xml-test-coverage: migrate
-	cargo tarpaulin --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,. -t 1200 --out Xml
+	cargo tarpaulin -t 1200 --out Xml --skip-clean --all-features --no-fail-fast --workspace=database/db-sqlx-postgres,database/db-sqlx-sqlite,.

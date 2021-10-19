@@ -79,7 +79,7 @@ impl<T: LibAdminDatabase> Data<T> {
 
     /// register new user
     pub async fn register(&self, payload: &Register) -> ServiceResult<()> {
-        if !crate::SETTINGS.get().unwrap().allow_registration {
+        if !self.settings.allow_registration {
             return Err(ServiceError::ClosedForRegistration);
         }
 

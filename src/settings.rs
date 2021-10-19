@@ -32,7 +32,7 @@ pub struct Server {
 }
 
 /// Database settings
-#[derive(Debug, Clone, Deserialize, Builder)]
+#[derive(Debug, Default, Clone, Deserialize, Builder)]
 #[builder(build_fn(validate = "Self::validate"))]
 pub struct Database {
     /// URL of the database
@@ -50,15 +50,6 @@ impl Default for Server {
             domain,
             cookie_secret,
         }
-    }
-}
-
-impl Default for Database {
-    fn default() -> Self {
-        let url = std::env::var("DATABASE_URL").expect("set DATABASE_URL");
-        let pool = 4;
-
-        Self { url, pool }
     }
 }
 

@@ -22,7 +22,6 @@ use std::thread;
 
 use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
 use db_core::prelude::*;
-use once_cell::sync::OnceCell;
 
 mod api;
 pub mod demo;
@@ -34,16 +33,8 @@ mod tests;
 pub use api::v1::ROUTES as V1_API_ROUTES;
 pub use settings::Settings;
 
-/// Settings
-pub static SETTINGS: OnceCell<Settings> = OnceCell::new();
-
 /// Default cache age for static assets
 pub const CACHE_AGE: u32 = 604800;
-
-/// load settings
-pub fn init(settings: Settings) {
-    SETTINGS.get_or_init(|| settings);
-}
 
 /// App data
 pub struct Data<T: LibAdminDatabase> {
@@ -51,6 +42,9 @@ pub struct Data<T: LibAdminDatabase> {
     pub db: T,
     /// credential-procession policy
     pub creds: Config,
+
+    /// settings
+    pub settings: Settings,
 }
 
 impl<T: LibAdminDatabase> Data<T> {
@@ -67,7 +61,7 @@ impl<T: LibAdminDatabase> Data<T> {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new<V, E>(db: V) -> Arc<Self>
+    pub async fn new<V, E>(db: V, settings: Settings) -> Arc<Self>
     where
         V: Connect<Pool = T, Error = E>,
         E: std::fmt::Debug + std::error::Error,
@@ -87,7 +81,11 @@ impl<T: LibAdminDatabase> Data<T> {
 
         let db = db.connect().await.unwrap();
 
-        let data = Data { db, creds };
+        let data = Data {
+            db,
+            creds,
+            settings,
+        };
 
         #[cfg(not(debug_assertions))]
         init.join().unwrap();

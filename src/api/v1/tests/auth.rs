@@ -14,17 +14,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use std::sync::Arc;
+
+use db_core::LibAdminDatabase;
+
 use crate::api::v1::auth::{Login, Register};
 use crate::errors::*;
 use crate::tests::*;
+use crate::Data;
 
 #[actix_rt::test]
-async fn auth_works() {
+async fn postgrest_auth_works() {
+    let data = sqlx_postgres::get_data().await;
+    auth_works(data).await;
+}
+
+#[actix_rt::test]
+async fn sqlite_auth_works() {
+    let data = sqlx_sqlite::get_data().await;
+    auth_works(data).await;
+}
+
+async fn auth_works<T: LibAdminDatabase>(data: Arc<Data<T>>) {
     const NAME: &str = "testuser";
     const PASSWORD: &str = "longpassword";
     const EMAIL: &str = "testuser1@a.com";
 
-    let data = get_data().await;
     let _ = data.delete_user(NAME, PASSWORD).await;
 
     // 1. Register with email == None
@@ -36,6 +51,12 @@ async fn auth_works() {
     };
 
     data.register(&register_payload).await.unwrap();
+    // check if duplicate username is allowed
+    assert!(matches!(
+        data.register(&register_payload).await.err(),
+        Some(ServiceError::UsernameTaken)
+    ));
+
     // delete user
     data.delete_user(NAME, PASSWORD).await.unwrap();
 
@@ -50,12 +71,6 @@ async fn auth_works() {
     register_payload.email = Some(EMAIL.into());
     register_payload.confirm_password = PASSWORD.into();
     data.register(&register_payload).await.unwrap();
-
-    // check if duplicate username is allowed
-    assert!(matches!(
-        data.register(&register_payload).await.err(),
-        Some(ServiceError::UsernameTaken)
-    ));
 
     // check if duplicate username is allowed
     let name = format!("{}dupemail", NAME);
