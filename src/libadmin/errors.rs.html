@@ -224,6 +224,18 @@
 <span id="224">224</span>
 <span id="225">225</span>
 <span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
 </pre><pre class="rust">
 <span class="comment">/*
  * Copyright (C) 2021  Aravinth Manivannan &lt;realaravinth@batsense.net&gt;
@@ -254,26 +266,34 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">tarpaulin_include</span>))]</span>
 <span class="doccomment">/// Error data structure grouping various error subtypes</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ServiceError</span> {
+    <span class="doccomment">/// All non-specific errors are grouped under this category</span>
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;internal server error&quot;</span>)]</span>
     <span class="ident">InternalServerError</span>,
 
     <span class="attribute">#[<span class="ident">display</span>(
         <span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;This server is is closed for registration. Contact admin if this is unexpecter&quot;</span>
     )]</span>
+    <span class="doccomment">/// registration failure, server is is closed for registration</span>
     <span class="ident">ClosedForRegistration</span>,
 
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;The value you entered for email is not an email&quot;</span>)]</span> <span class="comment">//405j</span>
+    <span class="doccomment">/// The value you entered for email is not an email&quot;</span>
     <span class="ident">NotAnEmail</span>,
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;The value you entered for URL is not a URL&quot;</span>)]</span> <span class="comment">//405j</span>
+    <span class="doccomment">/// The value you entered for url is not url&quot;</span>
     <span class="ident">NotAUrl</span>,
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;The value you entered for ID is not a valid ID&quot;</span>)]</span> <span class="comment">//405j</span>
+    <span class="doccomment">/// The value you entered for ID is not a valid ID</span>
     <span class="ident">NotAnId</span>,
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;URL too long, maximum length can&#39;t be greater then 2048 characters&quot;</span>)]</span> <span class="comment">//405</span>
+    <span class="doccomment">/// URL too long, maximum length can&#39;t be greater then 2048 characters</span>
     <span class="ident">URLTooLong</span>,
 
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;Wrong password&quot;</span>)]</span>
+    <span class="doccomment">/// wrong password</span>
     <span class="ident">WrongPassword</span>,
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;Account not found&quot;</span>)]</span>
+    <span class="doccomment">/// account not found</span>
     <span class="ident">AccountNotFound</span>,
 
     <span class="doccomment">/// when the value passed contains profainity</span>
@@ -290,10 +310,13 @@
     <span class="ident">UsernameCaseMappedError</span>,
 
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;Passsword too short&quot;</span>)]</span>
+    <span class="doccomment">/// password too short</span>
     <span class="ident">PasswordTooShort</span>,
-    <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;Username too long&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;password too long&quot;</span>)]</span>
+    <span class="doccomment">/// password too long</span>
     <span class="ident">PasswordTooLong</span>,
     <span class="attribute">#[<span class="ident">display</span>(<span class="ident">fmt</span> <span class="op">=</span> <span class="string">&quot;Passwords don&#39;t match&quot;</span>)]</span>
+    <span class="doccomment">/// passwords don&#39;t match</span>
     <span class="ident">PasswordsDontMatch</span>,
 
     <span class="doccomment">/// when the a username is already taken</span>
@@ -307,6 +330,7 @@
 
 <span class="doccomment">/// HTTP Status code of errors</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ErrorStatusCode</span> {
+    <span class="doccomment">/// get HTTP status code of errors defined in libadmin</span>
     <span class="kw">fn</span> <span class="ident">status_code</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>;
 }
 

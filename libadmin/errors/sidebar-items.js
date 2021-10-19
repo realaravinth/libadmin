@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ServiceError","Error data structure grouping various error subtypes"]],"trait":[["ErrorStatusCode","HTTP Status code of errors"]],"type":[["ServiceResult","Generic result data structure"]]});
