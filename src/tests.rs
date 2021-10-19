@@ -8,7 +8,7 @@ pub mod sqlx_postgres {
     use db_sqlx_postgres::ConnectionOptions;
     use sqlx::postgres::PgPoolOptions;
 
-    pub async fn get_data() -> Arc<Data<db_sqlx_postgres::Database>> {
+    pub async fn get_data() -> Arc<Data> {
         let url = env::var("POSTGRES_DATABASE_URL").unwrap();
         let mut settings = Settings::default();
         settings.database.url = url.clone();
@@ -24,7 +24,7 @@ pub mod sqlx_sqlite {
     use db_sqlx_sqlite::ConnectionOptions;
     use sqlx::sqlite::SqlitePoolOptions;
 
-    pub async fn get_data() -> Arc<Data<db_sqlx_sqlite::Database>> {
+    pub async fn get_data() -> Arc<Data> {
         let url = env::var("SQLITE_DATABASE_URL").unwrap();
         let mut settings = Settings::default();
         settings.database.url = url.clone();

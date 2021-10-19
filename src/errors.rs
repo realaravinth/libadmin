@@ -151,8 +151,8 @@ impl From<ParseError> for ServiceError {
     }
 }
 
-impl<E: std::error::Error> From<DBError<E>> for ServiceError {
-    fn from(e: DBError<E>) -> Self {
+impl From<DBError> for ServiceError {
+    fn from(e: DBError) -> Self {
         log::error!("{:?}", e);
         println!("{:?}", e);
         match e {

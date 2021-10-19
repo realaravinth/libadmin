@@ -48,7 +48,7 @@ pub struct Secret {
     pub secret: String,
 }
 
-impl<T: LibAdminDatabase> Data<T> {
+impl Data {
     /// check if email exists on database
     pub async fn email_exists(&self, email: &str) -> ServiceResult<AccountCheckResp> {
         let resp = AccountCheckResp {

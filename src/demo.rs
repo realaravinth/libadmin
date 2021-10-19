@@ -31,7 +31,7 @@ pub const DEMO_USER: &str = "aaronsw";
 pub const DEMO_PASSWORD: &str = "password";
 
 /// register demo user runner
-async fn register_demo_user<T: db_core::LibAdminDatabase>(data: &Data<T>) -> ServiceResult<()> {
+async fn register_demo_user(data: &Data) -> ServiceResult<()> {
     if !data.username_exists(DEMO_USER).await?.exists {
         let register_payload = Register {
             username: DEMO_USER.into(),
@@ -50,17 +50,14 @@ async fn register_demo_user<T: db_core::LibAdminDatabase>(data: &Data<T>) -> Ser
     }
 }
 
-async fn delete_demo_user<T: db_core::LibAdminDatabase>(data: &Data<T>) -> ServiceResult<()> {
+async fn delete_demo_user(data: &Data) -> ServiceResult<()> {
     log::info!("Deleting demo user");
     data.delete_user(DEMO_USER, DEMO_PASSWORD).await?;
     Ok(())
 }
 
 /// creates and deletes demo user periodically
-pub async fn run<T: db_core::LibAdminDatabase + 'static>(
-    data: Data<T>,
-    duration: Duration,
-) -> ServiceResult<()> {
+pub async fn run(data: Data, duration: Duration) -> ServiceResult<()> {
     register_demo_user(&data).await?;
 
     let fut = async move {

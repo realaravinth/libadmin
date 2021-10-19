@@ -54,7 +54,7 @@ pub struct Password {
     pub password: String,
 }
 
-impl<T: LibAdminDatabase> Data<T> {
+impl Data {
     /// Log in method. Returns `Ok(())` when user is authenticated and errors when authentication
     /// fails
     pub async fn login(&self, payload: &Login) -> ServiceResult<String> {

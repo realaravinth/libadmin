@@ -16,9 +16,6 @@
 */
 use std::sync::Arc;
 
-use db_core::LibAdminDatabase;
-
-use crate::api::v1::account::*;
 use crate::api::v1::auth::Register;
 use crate::errors::*;
 use crate::tests::*;
@@ -36,7 +33,7 @@ async fn sqlite_account_works() {
     uname_email_exists_works(data).await;
 }
 
-async fn uname_email_exists_works<T: LibAdminDatabase>(data: Arc<Data<T>>) {
+async fn uname_email_exists_works(data: Arc<Data>) {
     const NAME: &str = "testuserexists";
     const PASSWORD: &str = "longpassword2";
     const EMAIL: &str = "testuserexists@a.com2";

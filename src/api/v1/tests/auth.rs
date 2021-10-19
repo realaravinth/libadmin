@@ -16,8 +16,6 @@
  */
 use std::sync::Arc;
 
-use db_core::LibAdminDatabase;
-
 use crate::api::v1::auth::{Login, Register};
 use crate::errors::*;
 use crate::tests::*;
@@ -35,7 +33,7 @@ async fn sqlite_auth_works() {
     auth_works(data).await;
 }
 
-async fn auth_works<T: LibAdminDatabase>(data: Arc<Data<T>>) {
+async fn auth_works(data: Arc<Data>) {
     const NAME: &str = "testuser";
     const PASSWORD: &str = "longpassword";
     const EMAIL: &str = "testuser1@a.com";

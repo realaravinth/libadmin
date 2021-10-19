@@ -17,7 +17,7 @@
 //! Version 1 API endpoints
 pub mod account;
 pub mod auth;
-mod routes;
+pub mod routes;
 #[cfg(test)]
 mod tests;
 

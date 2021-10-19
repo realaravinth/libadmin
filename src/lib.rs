@@ -24,7 +24,7 @@ use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
 use db_core::prelude::*;
 
 pub mod api;
-pub mod demo;
+//pub mod demo;
 pub mod errors;
 mod settings;
 #[cfg(test)]
@@ -37,9 +37,9 @@ pub use settings::Settings;
 pub const CACHE_AGE: u32 = 604800;
 
 /// App data
-pub struct Data<T: LibAdminDatabase> {
+pub struct Data {
     /// databse pool
-    pub db: T,
+    pub db: Box<dyn LibAdminDatabase>,
     /// credential-procession policy
     pub creds: Config,
 
@@ -47,7 +47,18 @@ pub struct Data<T: LibAdminDatabase> {
     pub settings: Settings,
 }
 
-impl<T: LibAdminDatabase> Data<T> {
+//impl<T: LibAdminDatabase> Marker for Data<T> {
+//    type DB = Box<dyn LibAdminDatabase>;
+//    fn get_settings(&self) -> &Settings {
+//        &self.settings
+//    }
+//
+//    fn get_db(&self) -> &T {
+//        &self.db
+//    }
+//}
+
+impl Data {
     /// Get credential-processing policy
     pub fn get_creds() -> Config {
         ConfigBuilder::default()
@@ -61,10 +72,9 @@ impl<T: LibAdminDatabase> Data<T> {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new<V, E>(db: V, settings: Settings) -> Arc<Self>
+    pub async fn new<T: LibAdminDatabase + 'static, V>(db: V, settings: Settings) -> Arc<Self>
     where
-        V: Connect<Pool = T, Error = E>,
-        E: std::fmt::Debug + std::error::Error,
+        V: Connect<Pool = T>,
     {
         //        #[cfg(test)]
         //        crate::tests::init();
@@ -80,6 +90,7 @@ impl<T: LibAdminDatabase> Data<T> {
         });
 
         let db = db.connect().await.unwrap();
+        let db = Box::new(db);
 
         let data = Data {
             db,
