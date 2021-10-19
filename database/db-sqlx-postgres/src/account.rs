@@ -1,3 +1,4 @@
+//! Account operations: update email, password and account secrets, etc.
 use crate::dev::*;
 
 impl Account for Database {}

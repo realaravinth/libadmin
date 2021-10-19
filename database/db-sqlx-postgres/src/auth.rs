@@ -6,6 +6,7 @@ impl Auth for Database {}
 use crate::Database;
 
 pub mod login {
+    //! Login mechanisms and datastructures
     use super::*;
 
     impl Login for Database {}
@@ -50,6 +51,7 @@ pub mod login {
 }
 
 pub mod register {
+    //! registration operations
 
     use super::*;
 
