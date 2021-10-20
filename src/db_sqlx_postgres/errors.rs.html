@@ -44,13 +44,13 @@
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">msg</span>.<span class="ident">contains</span>(<span class="string">&quot;admin_users_secret_key&quot;</span>) {
                 <span class="ident">DBError::DuplicateSecret</span>
             } <span class="kw">else</span> {
-                <span class="ident">DBError::DBError</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">Error::Database</span>(<span class="ident">err</span>)))
+                <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">Error::Database</span>(<span class="ident">err</span>)))
             }
         } <span class="kw">else</span> {
-            <span class="ident">DBError::DBError</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">Error::Database</span>(<span class="ident">err</span>)))
+            <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">Error::Database</span>(<span class="ident">err</span>)))
         }
     } <span class="kw">else</span> {
-        <span class="ident">DBError::DBError</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">e</span>))
+        <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>))
     }
 }
 </pre></div>
