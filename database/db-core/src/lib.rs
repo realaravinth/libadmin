@@ -119,3 +119,54 @@ pub trait LibAdminDatabase: std::marker::Send + std::marker::Sync {
     /// register with username
     async fn username_register(&self, payload: &UsernameRegisterPayload) -> DBResult<()>;
 }
+
+#[async_trait]
+impl<T: LibAdminDatabase + ?Sized> LibAdminDatabase for Box<T> {
+    async fn update_email(&self, payload: &UpdateEmailPayload) -> DBResult<()> {
+        (**self).update_email(payload).await
+    }
+    /// Update password of specified user in database
+    async fn update_password(&self, payload: &Creds) -> DBResult<()> {
+        (**self).update_password(payload).await
+    }
+    /// check if an email exists in the database
+    async fn email_exists(&self, email: &str) -> DBResult<bool> {
+        (**self).email_exists(email).await
+    }
+    /// delete account from database
+    async fn delete_account(&self, username: &str) -> DBResult<()> {
+        (**self).delete_account(username).await
+    }
+    /// check if a username exists in the database
+    async fn username_exists(&self, username: &str) -> DBResult<bool> {
+        (**self).username_exists(username).await
+    }
+    /// update username in database
+    async fn update_username(&self, payload: &UpdateUsernamePayload) -> DBResult<()> {
+        (**self).update_username(payload).await
+    }
+    /// update secret in database
+    async fn update_secret(&self, username: &str, secret: &str) -> DBResult<()> {
+        (**self).update_secret(username, secret).await
+    }
+    /// update secret in database
+    async fn get_secret(&self, username: &str) -> DBResult<String> {
+        (**self).get_secret(username).await
+    }
+    /// login with email as user-identifier
+    async fn email_login(&self, email: &str) -> DBResult<Creds> {
+        (**self).email_login(email).await
+    }
+    /// login with username as user-identifier
+    async fn username_login(&self, username: &str) -> DBResult<Password> {
+        (**self).username_login(username).await
+    }
+    /// username _and_ email is available during registration
+    async fn email_register(&self, payload: &EmailRegisterPayload) -> DBResult<()> {
+        (**self).email_register(payload).await
+    }
+    /// register with username
+    async fn username_register(&self, payload: &UsernameRegisterPayload) -> DBResult<()> {
+        (**self).username_register(payload).await
+    }
+}
