@@ -1,29 +1,38 @@
 //! represents all the ways a trait can fail using this crate
-use derive_more::{Display, Error as DeriveError};
+use std::error::Error as StdError;
+
+//use derive_more::{error, Error as DeriveError};
+use thiserror::Error;
 
 /// Error data structure grouping various error subtypes
-#[derive(Debug, Display, DeriveError)]
+#[derive(Debug, Error)]
 pub enum DBError {
     /// username is already taken
-    #[display(fmt = "Username not available")]
+    #[error("Username not available")]
     DuplicateUsername,
 
     /// user secret is already taken
-    #[display(fmt = "User secret not available")]
+    #[error("User secret not available")]
     DuplicateSecret,
 
     /// email is already taken
-    #[display(fmt = "Email not available")]
+    #[error("Email not available")]
     DuplicateEmail,
 
     /// Account with specified characteristics not found
-    #[display(fmt = "Account with specified characteristics not found")]
+    #[error("Account with specified characteristics not found")]
     AccountNotFound,
 
+    //    /// errors that are specific to a database implementation
+    //    #[error("Database error: {:?}", _0)]
+    //    DBError(#[error(not(source))] String),
     /// errors that are specific to a database implementation
-    #[display(fmt = "Database error: {:?}", _0)]
-    DBError(#[error(not(source))] String),
+    #[error("{0}")]
+    DBError(#[source] BoxDynError),
 }
+
+/// Convenience type alias for grouping driver-specific errors
+pub type BoxDynError = Box<dyn StdError + 'static + Send + Sync>;
 
 /// Generic result data structure
 pub type DBResult<V> = std::result::Result<V, DBError>;
