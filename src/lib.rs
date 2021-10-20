@@ -21,7 +21,6 @@ use std::sync::Arc;
 use std::thread;
 
 use argon2_creds::{Config, ConfigBuilder, PasswordPolicy};
-use db_core::prelude::*;
 
 pub mod api;
 //pub mod demo;

@@ -16,6 +16,9 @@
 */
 use std::sync::Arc;
 
+use db_core::prelude::*;
+
+use crate::api::v1::account::ChangePasswordReqest;
 use crate::api::v1::auth::Register;
 use crate::errors::*;
 use crate::tests::*;
@@ -35,10 +38,16 @@ async fn sqlite_account_works() {
 
 async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase>) {
     const NAME: &str = "testuserexists";
+    const NAME2: &str = "testuserexists2";
+    const NAME3: &str = "testuserexists3";
     const PASSWORD: &str = "longpassword2";
-    const EMAIL: &str = "testuserexists@a.com2";
+    const EMAIL: &str = "accotestsuser@a.com";
+    const EMAIL2: &str = "accotestsuser2@a.com";
+    const EMAIL3: &str = "accotestsuser3@a.com";
 
     let _ = data.delete_user(db, NAME, PASSWORD).await;
+    let _ = data.delete_user(db, NAME2, PASSWORD).await;
+    let _ = data.delete_user(db, NAME3, PASSWORD).await;
 
     //// update username of nonexistant user
     //data.update_username(NAME, PASSWORD).await.err();
@@ -70,16 +79,20 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
     // check username email for non existent account
     assert!(!data.email_exists(db, EMAIL).await.unwrap().exists);
 
-    let register_payload = Register {
+    let mut register_payload = Register {
         username: NAME.into(),
         password: PASSWORD.into(),
         confirm_password: PASSWORD.into(),
         email: Some(EMAIL.into()),
     };
     data.register(db, &register_payload).await.unwrap();
+    register_payload.username = NAME2.into();
+    register_payload.email = Some(EMAIL2.into());
+    data.register(db, &register_payload).await.unwrap();
 
     // check username exists
     assert!(data.username_exists(db, NAME).await.unwrap().exists);
+    assert!(data.username_exists(db, NAME2).await.unwrap().exists);
     // check email exists
     assert!(data.email_exists(db, EMAIL).await.unwrap().exists);
 
@@ -89,6 +102,41 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
     data.update_user_secret(db, NAME).await.unwrap();
     let new_secret = data.get_secret(db, NAME).await.unwrap();
     assert_ne!(secret.secret, new_secret.secret);
+
+    // update username
+    data.update_username(db, NAME2, NAME3).await.unwrap();
+    assert!(!data.username_exists(db, NAME2).await.unwrap().exists);
+    assert!(data.username_exists(db, NAME3).await.unwrap().exists);
+
+    assert!(matches!(
+        data.update_username(db, NAME3, NAME).await.err(),
+        Some(ServiceError::UsernameTaken)
+    ));
+
+    // update email
+    assert!(matches!(
+        data.set_email(db, NAME, EMAIL2).await.err(),
+        Some(ServiceError::EmailTaken)
+    ));
+    data.set_email(db, NAME, EMAIL3).await.unwrap();
+
+    // change password
+    let mut change_password_req = ChangePasswordReqest {
+        password: PASSWORD.into(),
+        new_password: NAME.into(),
+        confirm_new_password: PASSWORD.into(),
+    };
+    assert!(matches!(
+        data.change_password(db, NAME, &change_password_req)
+            .await
+            .err(),
+        Some(ServiceError::PasswordsDontMatch)
+    ));
+
+    change_password_req.confirm_new_password = NAME.into();
+    data.change_password(db, NAME, &change_password_req)
+        .await
+        .unwrap();
 }
 
 //#[actix_rt::test]
