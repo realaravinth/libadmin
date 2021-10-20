@@ -64,7 +64,7 @@ impl Connect for ConnectionOptions {
                 .pool_options
                 .connect(&fresh.url)
                 .await
-                .map_err(|e| DBError::DBError(format!("{:?}", e)))?,
+                .map_err(|e| DBError::DBError(Box::new(e)))?,
             Self::Existing(conn) => conn.0,
         };
         Ok(Database { pool })
@@ -77,7 +77,7 @@ impl Migrate for Database {
         sqlx::migrate!("./migrations/")
             .run(&self.pool)
             .await
-            .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+            .map_err(|e| DBError::DBError(Box::new(e)))?;
         Ok(())
     }
 }
@@ -94,7 +94,7 @@ impl LibAdminDatabase for Database {
         .await
         .map_err(|e| match e {
             Error::RowNotFound => DBError::AccountNotFound,
-            e => DBError::DBError(format!("{:?}", e)),
+            e => DBError::DBError(Box::new(e)),
         })
     }
 
@@ -108,7 +108,7 @@ impl LibAdminDatabase for Database {
         .await
         .map_err(|e| match e {
             Error::RowNotFound => DBError::AccountNotFound,
-            e => DBError::DBError(format!("{:?}", e)),
+            e => DBError::DBError(Box::new(e)),
         })
     }
 
@@ -162,7 +162,7 @@ impl LibAdminDatabase for Database {
         )
         .execute(&self.pool)
         .await
-        .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+        .map_err(|e| DBError::DBError(Box::new(e)))?;
         Ok(())
     }
 
@@ -173,7 +173,7 @@ impl LibAdminDatabase for Database {
         )
         .fetch_one(&self.pool)
         .await
-        .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+        .map_err(|e| DBError::DBError(Box::new(e)))?;
 
         let mut exists = false;
         if let Some(x) = res.exists {
@@ -189,7 +189,7 @@ impl LibAdminDatabase for Database {
         sqlx::query!("DELETE FROM admin_users WHERE username = ($1)", username,)
             .execute(&self.pool)
             .await
-            .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+            .map_err(|e| DBError::DBError(Box::new(e)))?;
         Ok(())
     }
 
@@ -200,7 +200,7 @@ impl LibAdminDatabase for Database {
         )
         .fetch_one(&self.pool)
         .await
-        .map_err(|e| DBError::DBError(format!("{:?}", e)))?;
+        .map_err(|e| DBError::DBError(Box::new(e)))?;
 
         let mut exists = false;
         if let Some(x) = res.exists {
@@ -249,7 +249,7 @@ impl LibAdminDatabase for Database {
         .await
         .map_err(|e| match e {
             Error::RowNotFound => DBError::AccountNotFound,
-            e => DBError::DBError(format!("{:?}", e)),
+            e => DBError::DBError(Box::new(e)),
         })?;
 
         Ok(secret.secret)

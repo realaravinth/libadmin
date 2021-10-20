@@ -14,12 +14,12 @@ pub fn map_register_err(e: Error) -> DBError {
             } else if msg.contains("admin_users.secret") {
                 DBError::DuplicateSecret
             } else {
-                DBError::DBError(format!("{:?}", Error::Database(err)))
+                DBError::DBError(Box::new(Error::Database(err)))
             }
         } else {
-            DBError::DBError(format!("{:?}", Error::Database(err)))
+            DBError::DBError(Box::new(Error::Database(err)))
         }
     } else {
-        DBError::DBError(format!("{:?}", e))
+        DBError::DBError(Box::new(e))
     }
 }
