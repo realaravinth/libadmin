@@ -16,6 +16,8 @@
  */
 use std::sync::Arc;
 
+use db_core::LibAdminDatabase;
+
 use crate::api::v1::auth::{Login, Register};
 use crate::errors::*;
 use crate::tests::*;
@@ -23,22 +25,22 @@ use crate::Data;
 
 #[actix_rt::test]
 async fn postgrest_auth_works() {
-    let data = sqlx_postgres::get_data().await;
-    auth_works(data).await;
+    let (db, data) = sqlx_postgres::get_data().await;
+    auth_works(data, &db).await;
 }
 
 #[actix_rt::test]
 async fn sqlite_auth_works() {
-    let data = sqlx_sqlite::get_data().await;
-    auth_works(data).await;
+    let (db, data) = sqlx_sqlite::get_data().await;
+    auth_works(data, &db).await;
 }
 
-async fn auth_works(data: Arc<Data>) {
+async fn auth_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase>) {
     const NAME: &str = "testuser";
     const PASSWORD: &str = "longpassword";
     const EMAIL: &str = "testuser1@a.com";
 
-    let _ = data.delete_user(NAME, PASSWORD).await;
+    let _ = data.delete_user(db, NAME, PASSWORD).await;
 
     // 1. Register with email == None
     let mut register_payload = Register {
@@ -48,33 +50,33 @@ async fn auth_works(data: Arc<Data>) {
         email: None,
     };
 
-    data.register(&register_payload).await.unwrap();
+    data.register(db, &register_payload).await.unwrap();
     // check if duplicate username is allowed
     assert!(matches!(
-        data.register(&register_payload).await.err(),
+        data.register(db, &register_payload).await.err(),
         Some(ServiceError::UsernameTaken)
     ));
 
     // delete user
-    data.delete_user(NAME, PASSWORD).await.unwrap();
+    data.delete_user(db, NAME, PASSWORD).await.unwrap();
 
     // registeration: passwords don't match
     register_payload.confirm_password = NAME.into();
     assert!(matches!(
-        data.register(&register_payload).await.err(),
+        data.register(db, &register_payload).await.err(),
         Some(ServiceError::PasswordsDontMatch)
     ));
 
     // Register with email
     register_payload.email = Some(EMAIL.into());
     register_payload.confirm_password = PASSWORD.into();
-    data.register(&register_payload).await.unwrap();
+    data.register(db, &register_payload).await.unwrap();
 
     // check if duplicate username is allowed
     let name = format!("{}dupemail", NAME);
     register_payload.username = name;
     assert!(matches!(
-        data.register(&register_payload).await.err(),
+        data.register(db, &register_payload).await.err(),
         Some(ServiceError::EmailTaken)
     ));
 
@@ -83,23 +85,23 @@ async fn auth_works(data: Arc<Data>) {
         login: EMAIL.into(),
         password: PASSWORD.into(),
     };
-    data.login(&creds).await.unwrap();
+    data.login(db, &creds).await.unwrap();
 
     // signin with username
     creds.login = NAME.into();
-    data.login(&creds).await.unwrap();
+    data.login(db, &creds).await.unwrap();
 
     // sigining in with non-existent username
     creds.login = "nonexistantuser".into();
     assert!(matches!(
-        data.login(&creds).await.err(),
+        data.login(db, &creds).await.err(),
         Some(ServiceError::AccountNotFound)
     ));
 
     // sigining in with non-existent email
     creds.login = "nonexistantuser@example.com".into();
     assert!(matches!(
-        data.login(&creds).await.err(),
+        data.login(db, &creds).await.err(),
         Some(ServiceError::AccountNotFound)
     ));
 
@@ -107,7 +109,7 @@ async fn auth_works(data: Arc<Data>) {
     creds.login = NAME.into();
     creds.password = NAME.into();
     assert!(matches!(
-        data.login(&creds).await.err(),
+        data.login(db, &creds).await.err(),
         Some(ServiceError::WrongPassword)
     ));
 }

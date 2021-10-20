@@ -57,7 +57,11 @@ pub struct Password {
 impl Data {
     /// Log in method. Returns `Ok(())` when user is authenticated and errors when authentication
     /// fails
-    pub async fn login(&self, payload: &Login) -> ServiceResult<String> {
+    pub async fn login<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        payload: &Login,
+    ) -> ServiceResult<String> {
         use argon2_creds::Config;
 
         let verify = |stored: &str, received: &str| {
@@ -69,18 +73,22 @@ impl Data {
         };
 
         if payload.login.contains('@') {
-            let creds = self.db.email_login(&payload.login).await?;
+            let creds = db.email_login(&payload.login).await?;
             verify(&creds.password, &payload.password)?;
             Ok(creds.username)
         } else {
-            let password = self.db.username_login(&payload.login).await?;
+            let password = db.username_login(&payload.login).await?;
             verify(&password.password, &payload.password)?;
             Ok(payload.login.clone())
         }
     }
 
     /// register new user
-    pub async fn register(&self, payload: &Register) -> ServiceResult<()> {
+    pub async fn register<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        payload: &Register,
+    ) -> ServiceResult<()> {
         if !self.settings.allow_registration {
             return Err(ServiceError::ClosedForRegistration);
         }
@@ -108,7 +116,7 @@ impl Data {
                     email,
                 };
 
-                match self.db.email_register(&db_payload).await {
+                match db.email_register(&db_payload).await {
                     Ok(_) => break,
                     Err(DBError::DuplicateSecret) => continue,
                     Err(e) => return Err(e.into()),
@@ -124,7 +132,7 @@ impl Data {
                     password: &hash,
                 };
 
-                match self.db.username_register(&db_payload).await {
+                match db.username_register(&db_payload).await {
                     Ok(_) => break,
                     Err(DBError::DuplicateSecret) => continue,
                     Err(e) => return Err(e.into()),

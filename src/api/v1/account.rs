@@ -50,35 +50,49 @@ pub struct Secret {
 
 impl Data {
     /// check if email exists on database
-    pub async fn email_exists(&self, email: &str) -> ServiceResult<AccountCheckResp> {
+    pub async fn email_exists<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        email: &str,
+    ) -> ServiceResult<AccountCheckResp> {
         let resp = AccountCheckResp {
-            exists: self.db.email_exists(email).await?,
+            exists: db.email_exists(email).await?,
         };
 
         Ok(resp)
     }
 
     /// update email
-    pub async fn set_email(&self, username: &str, email: &str) -> ServiceResult<()> {
+    pub async fn set_email<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+        email: &str,
+    ) -> ServiceResult<()> {
         self.creds.email(email)?;
 
         let payload = UpdateEmailPayload { username, email };
-        self.db.update_email(&payload).await?;
+        db.update_email(&payload).await?;
         Ok(())
     }
 
     /// check if email exists in database
-    pub async fn username_exists(&self, username: &str) -> ServiceResult<AccountCheckResp> {
+    pub async fn username_exists<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+    ) -> ServiceResult<AccountCheckResp> {
         let resp = AccountCheckResp {
-            exists: self.db.username_exists(username).await?,
+            exists: db.username_exists(username).await?,
         };
 
         Ok(resp)
     }
 
     /// update username of a registered user
-    pub async fn update_username(
+    pub async fn update_username<T: LibAdminDatabase>(
         &self,
+        db: &T,
         current_username: &str,
         new_username: &str,
     ) -> ServiceResult<String> {
@@ -89,26 +103,34 @@ impl Data {
             new_username: &processed_uname,
         };
 
-        self.db.update_username(&db_payload).await?;
+        db.update_username(&db_payload).await?;
         Ok(processed_uname)
     }
 
     /// get account secret of a registered user
-    pub async fn get_secret(&self, username: &str) -> ServiceResult<Secret> {
+    pub async fn get_secret<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+    ) -> ServiceResult<Secret> {
         let secret = Secret {
-            secret: self.db.get_secret(username).await?,
+            secret: db.get_secret(username).await?,
         };
 
         Ok(secret)
     }
 
     /// update account secret of a registered user
-    pub async fn update_user_secret(&self, username: &str) -> ServiceResult<String> {
+    pub async fn update_user_secret<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+    ) -> ServiceResult<String> {
         let mut secret;
         loop {
             secret = get_random(32);
 
-            match self.db.update_secret(username, &secret).await {
+            match db.update_secret(username, &secret).await {
                 Ok(_) => break,
                 Err(DBError::DuplicateSecret) => continue,
                 Err(e) => return Err(e.into()),
@@ -119,9 +141,14 @@ impl Data {
     }
 
     // returns Ok(()) upon successful authentication
-    async fn authenticate(&self, username: &str, password: &str) -> ServiceResult<()> {
+    async fn authenticate<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+        password: &str,
+    ) -> ServiceResult<()> {
         use argon2_creds::Config;
-        let resp = self.db.username_login(username).await?;
+        let resp = db.username_login(username).await?;
         if Config::verify(&resp.password, password)? {
             Ok(())
         } else {
@@ -130,15 +157,21 @@ impl Data {
     }
 
     /// delete user
-    pub async fn delete_user(&self, username: &str, password: &str) -> ServiceResult<()> {
-        self.authenticate(username, password).await?;
-        self.db.delete_account(username).await?;
+    pub async fn delete_user<T: LibAdminDatabase>(
+        &self,
+        db: &T,
+        username: &str,
+        password: &str,
+    ) -> ServiceResult<()> {
+        self.authenticate(db, username, password).await?;
+        db.delete_account(username).await?;
         Ok(())
     }
 
     /// change password
-    pub async fn change_password(
+    pub async fn change_password<T: LibAdminDatabase>(
         &self,
+        db: &T,
         username: &str,
         payload: &ChangePasswordReqest,
     ) -> ServiceResult<()> {
@@ -146,7 +179,7 @@ impl Data {
             return Err(ServiceError::PasswordsDontMatch);
         }
 
-        self.authenticate(username, &payload.password).await?;
+        self.authenticate(db, username, &payload.password).await?;
 
         let new_hash = self.creds.password(&payload.new_password)?;
 
@@ -155,7 +188,7 @@ impl Data {
             password: new_hash,
         };
 
-        self.db.update_password(&db_payload).await?;
+        db.update_password(&db_payload).await?;
 
         Ok(())
     }

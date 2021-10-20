@@ -23,22 +23,22 @@ use crate::*;
 
 #[actix_rt::test]
 async fn postgrest_account_works() {
-    let data = sqlx_postgres::get_data().await;
-    uname_email_exists_works(data).await;
+    let (db, data) = sqlx_postgres::get_data().await;
+    uname_email_exists_works(data, &db).await;
 }
 
 #[actix_rt::test]
 async fn sqlite_account_works() {
-    let data = sqlx_sqlite::get_data().await;
-    uname_email_exists_works(data).await;
+    let (db, data) = sqlx_sqlite::get_data().await;
+    uname_email_exists_works(data, &db).await;
 }
 
-async fn uname_email_exists_works(data: Arc<Data>) {
+async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase>) {
     const NAME: &str = "testuserexists";
     const PASSWORD: &str = "longpassword2";
     const EMAIL: &str = "testuserexists@a.com2";
 
-    let _ = data.delete_user(NAME, PASSWORD).await;
+    let _ = data.delete_user(db, NAME, PASSWORD).await;
 
     //// update username of nonexistant user
     //data.update_username(NAME, PASSWORD).await.err();
@@ -49,7 +49,7 @@ async fn uname_email_exists_works(data: Arc<Data>) {
 
     // update secret of nonexistant user
     assert!(matches!(
-        data.get_secret(NAME).await.err(),
+        data.get_secret(db, NAME).await.err(),
         Some(ServiceError::AccountNotFound)
     ));
 
@@ -66,9 +66,9 @@ async fn uname_email_exists_works(data: Arc<Data>) {
     //));
 
     // check username exists for non existent account
-    assert!(!data.username_exists(NAME).await.unwrap().exists);
+    assert!(!data.username_exists(db, NAME).await.unwrap().exists);
     // check username email for non existent account
-    assert!(!data.email_exists(EMAIL).await.unwrap().exists);
+    assert!(!data.email_exists(db, EMAIL).await.unwrap().exists);
 
     let register_payload = Register {
         username: NAME.into(),
@@ -76,18 +76,18 @@ async fn uname_email_exists_works(data: Arc<Data>) {
         confirm_password: PASSWORD.into(),
         email: Some(EMAIL.into()),
     };
-    data.register(&register_payload).await.unwrap();
+    data.register(db, &register_payload).await.unwrap();
 
     // check username exists
-    assert!(data.username_exists(NAME).await.unwrap().exists);
+    assert!(data.username_exists(db, NAME).await.unwrap().exists);
     // check email exists
-    assert!(data.email_exists(EMAIL).await.unwrap().exists);
+    assert!(data.email_exists(db, EMAIL).await.unwrap().exists);
 
     // chech if get user secret works
-    let secret = data.get_secret(NAME).await.unwrap();
+    let secret = data.get_secret(db, NAME).await.unwrap();
 
-    data.update_user_secret(NAME).await.unwrap();
-    let new_secret = data.get_secret(NAME).await.unwrap();
+    data.update_user_secret(db, NAME).await.unwrap();
+    let new_secret = data.get_secret(db, NAME).await.unwrap();
     assert_ne!(secret.secret, new_secret.secret);
 }
 

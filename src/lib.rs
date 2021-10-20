@@ -39,7 +39,6 @@ pub const CACHE_AGE: u32 = 604800;
 /// App data
 pub struct Data {
     /// databse pool
-    pub db: Box<dyn LibAdminDatabase>,
     /// credential-procession policy
     pub creds: Config,
 
@@ -72,10 +71,7 @@ impl Data {
 
     #[cfg(not(tarpaulin_include))]
     /// create new instance of app data
-    pub async fn new<T: LibAdminDatabase + 'static, V>(db: V, settings: Settings) -> Arc<Self>
-    where
-        V: Connect<Pool = T>,
-    {
+    pub async fn new(settings: Settings) -> Arc<Self> {
         //        #[cfg(test)]
         //        crate::tests::init();
 
@@ -89,14 +85,7 @@ impl Data {
             log::info!("Initialized credential manager");
         });
 
-        let db = db.connect().await.unwrap();
-        let db = Box::new(db);
-
-        let data = Data {
-            db,
-            creds,
-            settings,
-        };
+        let data = Data { creds, settings };
 
         #[cfg(not(debug_assertions))]
         init.join().unwrap();
