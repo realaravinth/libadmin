@@ -60,7 +60,7 @@ async fn auth_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase>) {
     // delete user
     data.delete_user(db, NAME, PASSWORD).await.unwrap();
 
-    // registeration: passwords don't match
+    // registration: passwords don't match
     register_payload.confirm_password = NAME.into();
     assert!(matches!(
         data.register(db, &register_payload).await.err(),

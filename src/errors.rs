@@ -23,7 +23,7 @@ use derive_more::{Display, Error};
 use url::ParseError;
 use validator::ValidationErrors;
 
-#[derive(Debug, Display, Error)]
+#[derive(Debug, PartialEq, Display, Error)]
 #[cfg(not(tarpaulin_include))]
 /// Error data structure grouping various error subtypes
 pub enum ServiceError {

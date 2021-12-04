@@ -41,7 +41,7 @@ pub struct ChangePasswordReqest {
     pub confirm_new_password: String,
 }
 
-/// Data structure used to reperesent account secret
+/// Data structure used to represent account secret
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Secret {
     /// account secret

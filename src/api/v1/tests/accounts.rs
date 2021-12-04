@@ -49,30 +49,30 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
     let _ = data.delete_user(db, NAME2, PASSWORD).await;
     let _ = data.delete_user(db, NAME3, PASSWORD).await;
 
-    //// update username of nonexistant user
+    //// update username of nonexistent user
     //data.update_username(NAME, PASSWORD).await.err();
-    //assert!(matches!(
-    //    data.update_username(NAME, PASSWORD).await.err(),
-    //    Some(ServiceError::AccountNotFound)
-    //));
+    assert_eq!(
+        data.update_username(db, NAME, PASSWORD).await.err(),
+        Some(ServiceError::AccountNotFound)
+    );
 
-    // update secret of nonexistant user
-    assert!(matches!(
+    // update secret of nonexistent user
+    assert_eq!(
         data.get_secret(db, NAME).await.err(),
         Some(ServiceError::AccountNotFound)
-    ));
+    );
 
-    // // get secret of non-existent account
-    // assert!(matches!(
-    //     data.update_user_secret(NAME).await.err(),
-    //     Some(ServiceError::AccountNotFound)
-    // ));
+    // get secret of non-existent account
+    assert_eq!(
+        data.update_user_secret(db, NAME).await.err(),
+        Some(ServiceError::AccountNotFound)
+    );
 
-    // update email of nonexistant user
-    //assert!(matches!(
-    //    data.set_email(NAME, EMAIL).await.err(),
-    //    Some(ServiceError::AccountNotFound)
-    //));
+    //update email of nonexistent user
+    assert_eq!(
+        data.set_email(db, NAME, EMAIL).await.err(),
+        Some(ServiceError::AccountNotFound)
+    );
 
     // check username exists for non existent account
     assert!(!data.username_exists(db, NAME).await.unwrap().exists);
@@ -96,7 +96,7 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
     // check email exists
     assert!(data.email_exists(db, EMAIL).await.unwrap().exists);
 
-    // chech if get user secret works
+    // check if get user secret works
     let secret = data.get_secret(db, NAME).await.unwrap();
 
     data.update_user_secret(db, NAME).await.unwrap();
@@ -114,10 +114,10 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
     ));
 
     // update email
-    assert!(matches!(
+    assert_eq!(
         data.set_email(db, NAME, EMAIL2).await.err(),
         Some(ServiceError::EmailTaken)
-    ));
+    );
     data.set_email(db, NAME, EMAIL3).await.unwrap();
 
     // change password
@@ -126,12 +126,12 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
         new_password: NAME.into(),
         confirm_new_password: PASSWORD.into(),
     };
-    assert!(matches!(
+    assert_eq!(
         data.change_password(db, NAME, &change_password_req)
             .await
             .err(),
         Some(ServiceError::PasswordsDontMatch)
-    ));
+    );
 
     change_password_req.confirm_new_password = NAME.into();
     data.change_password(db, NAME, &change_password_req)
@@ -183,7 +183,7 @@ async fn uname_email_exists_works(data: Arc<Data>, db: &Box<dyn LibAdminDatabase
 //    )
 //    .await;
 //
-//    // wrong password while deleteing account
+//    // wrong password while deleting account
 //    let mut payload = Password {
 //        password: NAME.into(),
 //    };

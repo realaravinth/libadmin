@@ -37,7 +37,7 @@ pub const CACHE_AGE: u32 = 604800;
 
 /// App data
 pub struct Data {
-    /// databse pool
+    /// database pool
     /// credential-procession policy
     pub creds: Config,
 

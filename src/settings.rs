@@ -26,7 +26,7 @@ use crate::api::v1::get_random;
 pub struct Server {
     /// Domain name of the server
     pub domain: String,
-    /// Used to sign cookies. Provide a randomly generated string of atleast 32 chars long.
+    /// Used to sign cookies. Provide a randomly generated string of at least 32 chars long.
     pub cookie_secret: String,
     //    pub proxy_has_tls: bool,
 }
