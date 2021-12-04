@@ -129,7 +129,7 @@ impl LibAdminDatabase for Database {
     }
 
     async fn update_email(&self, payload: &UpdateEmailPayload) -> DBResult<()> {
-        sqlx::query!(
+        let x = sqlx::query!(
             "UPDATE admin_users set email = $1
         WHERE username = $2",
             payload.email,
@@ -138,10 +138,13 @@ impl LibAdminDatabase for Database {
         .execute(&self.pool)
         .await
         .map_err(map_register_err)?;
+        if x.rows_affected() == 0 {
+            return Err(DBError::AccountNotFound);
+        }
         Ok(())
     }
     async fn update_password(&self, payload: &Creds) -> DBResult<()> {
-        sqlx::query!(
+        let x = sqlx::query!(
             "UPDATE admin_users set password = $1
         WHERE username = $2",
             payload.password,
@@ -150,6 +153,9 @@ impl LibAdminDatabase for Database {
         .execute(&self.pool)
         .await
         .map_err(|e| DBError::DBError(Box::new(e)))?;
+        if x.rows_affected() == 0 {
+            return Err(DBError::AccountNotFound);
+        }
         Ok(())
     }
 
@@ -190,7 +196,7 @@ impl LibAdminDatabase for Database {
     }
 
     async fn update_username(&self, payload: &UpdateUsernamePayload) -> DBResult<()> {
-        sqlx::query!(
+        let x = sqlx::query!(
             "UPDATE admin_users set username = $1 WHERE username = $2",
             payload.new_username,
             payload.old_username,
@@ -198,10 +204,13 @@ impl LibAdminDatabase for Database {
         .execute(&self.pool)
         .await
         .map_err(map_register_err)?;
+        if x.rows_affected() == 0 {
+            return Err(DBError::AccountNotFound);
+        }
         Ok(())
     }
     async fn update_secret(&self, username: &str, secret: &str) -> DBResult<()> {
-        sqlx::query!(
+        let x = sqlx::query!(
             "UPDATE admin_users set secret = $1
         WHERE username = $2",
             secret,
@@ -210,6 +219,10 @@ impl LibAdminDatabase for Database {
         .execute(&self.pool)
         .await
         .map_err(map_register_err)?;
+        if x.rows_affected() == 0 {
+            return Err(DBError::AccountNotFound);
+        }
+
         Ok(())
     }
 
