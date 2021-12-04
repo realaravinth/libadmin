@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["libadmin"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.57.0/core/marker/trait.StructuralPartialEq.html\" title=\"trait core::marker::StructuralPartialEq\">StructuralPartialEq</a> for <a class=\"enum\" href=\"libadmin/errors/enum.ServiceError.html\" title=\"enum libadmin::errors::ServiceError\">ServiceError</a>","synthetic":false,"types":["libadmin::errors::ServiceError"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

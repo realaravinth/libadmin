@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `database&#x2F;db-sqlx-postgres&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../db_sqlx_postgres/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input"name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `database&#x2F;db-sqlx-postgres&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../db_sqlx_postgres/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -255,8 +255,22 @@
 <span id="255">255</span>
 <span id="256">256</span>
 <span id="257">257</span>
-</pre><pre class="rust">
-<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+</pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
 <span class="doccomment">//! # `libadmin` database operations implemented using sqlx postgres</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! [`LibAdminDatabase`](LibAdminDatabase) is implemented on [Database].</span>
@@ -298,8 +312,8 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">dev</span> {
     <span class="doccomment">//! useful imports for supporting a new database</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::errors</span>::<span class="kw-2">*</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::Database</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::errors</span>::<span class="kw-2">*</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Database</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">db_core::dev</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">prelude</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sqlx::Error</span>;
@@ -316,14 +330,14 @@
 <span class="kw">impl</span> <span class="ident">Connect</span> <span class="kw">for</span> <span class="ident">ConnectionOptions</span> {
     <span class="kw">type</span> <span class="ident">Pool</span> <span class="op">=</span> <span class="ident">Database</span>;
     <span class="doccomment">/// create connection pool</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Pool</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="self">self</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Pool</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span><span class="ident">::Fresh</span>(<span class="ident">fresh</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">fresh</span>
+            <span class="ident"><span class="self">Self</span>::Fresh</span>(<span class="ident">fresh</span>) =&gt; <span class="ident">fresh</span>
                 .<span class="ident">pool_options</span>
                 .<span class="ident">connect</span>(<span class="kw-2">&amp;</span><span class="ident">fresh</span>.<span class="ident">url</span>)
                 .<span class="kw">await</span>
                 .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>,
-            <span class="self">Self</span><span class="ident">::Existing</span>(<span class="ident">conn</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">conn</span>.<span class="number">0</span>,
+            <span class="ident"><span class="self">Self</span>::Existing</span>(<span class="ident">conn</span>) =&gt; <span class="ident">conn</span>.<span class="number">0</span>,
         };
         <span class="prelude-val">Ok</span>(<span class="ident">Database</span> { <span class="ident">pool</span> })
     }
@@ -331,7 +345,7 @@
 
 <span class="attribute">#[<span class="ident">async_trait</span>]</span>
 <span class="kw">impl</span> <span class="ident">Migrate</span> <span class="kw">for</span> <span class="ident">Database</span> {
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">migrate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">migrate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="macro">sqlx::migrate!</span>(<span class="string">&quot;./migrations/&quot;</span>)
             .<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
             .<span class="kw">await</span>
@@ -342,7 +356,7 @@
 
 <span class="attribute">#[<span class="ident">async_trait</span>]</span>
 <span class="kw">impl</span> <span class="ident">LibAdminDatabase</span> <span class="kw">for</span> <span class="ident">Database</span> {
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_login</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">email</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">Creds</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_login</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">email</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">Creds</span><span class="op">&gt;</span> {
         <span class="macro">sqlx::query_as!</span>(
             <span class="ident">Creds</span>,
             <span class="string">r#&quot;SELECT username, password  FROM admin_users WHERE email = ($1)&quot;#</span>,
@@ -351,12 +365,12 @@
         .<span class="ident">fetch_one</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">e</span> {
-            <span class="ident">Error::RowNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::AccountNotFound</span>,
-            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
+            <span class="ident">Error::RowNotFound</span> =&gt; <span class="ident">DBError::AccountNotFound</span>,
+            <span class="ident">e</span> =&gt; <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
         })
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_login</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">Password</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_login</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">Password</span><span class="op">&gt;</span> {
         <span class="macro">sqlx::query_as!</span>(
             <span class="ident">Password</span>,
             <span class="string">r#&quot;SELECT password  FROM admin_users WHERE username = ($1)&quot;#</span>,
@@ -365,12 +379,12 @@
         .<span class="ident">fetch_one</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">e</span> {
-            <span class="ident">Error::RowNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::AccountNotFound</span>,
-            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
+            <span class="ident">Error::RowNotFound</span> =&gt; <span class="ident">DBError::AccountNotFound</span>,
+            <span class="ident">e</span> =&gt; <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
         })
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">EmailRegisterPayload</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">EmailRegisterPayload</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;insert into admin_users 
         (username , password, email, secret) values ($1, $2, $3, $4)&quot;</span>,
@@ -385,7 +399,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UsernameRegisterPayload</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UsernameRegisterPayload</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;INSERT INTO admin_users 
         (username , password,  secret) VALUES ($1, $2, $3)&quot;</span>,
@@ -399,8 +413,8 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateEmailPayload</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">sqlx::query!</span>(
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateEmailPayload</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;UPDATE admin_users set email = $1
         WHERE username = $2&quot;</span>,
             <span class="kw-2">&amp;</span><span class="ident">payload</span>.<span class="ident">email</span>,
@@ -409,10 +423,14 @@
         .<span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="ident">map_register_err</span>)<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">x</span>.<span class="ident">rows_affected</span>() <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DBError::AccountNotFound</span>);
+        }
+
         <span class="prelude-val">Ok</span>(())
     }
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_password</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Creds</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">sqlx::query!</span>(
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_password</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Creds</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;UPDATE admin_users set password = $1
         WHERE username = $2&quot;</span>,
             <span class="kw-2">&amp;</span><span class="ident">payload</span>.<span class="ident">password</span>,
@@ -421,10 +439,14 @@
         .<span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">x</span>.<span class="ident">rows_affected</span>() <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DBError::AccountNotFound</span>);
+        }
+
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_exists</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">email</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">email_exists</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">email</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;SELECT EXISTS (SELECT 1 from admin_users WHERE email = $1)&quot;</span>,
             <span class="kw-2">&amp;</span><span class="ident">email</span>
@@ -443,7 +465,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">exists</span>)
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">delete_account</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">delete_account</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="macro">sqlx::query!</span>(<span class="string">&quot;DELETE FROM admin_users WHERE username = ($1)&quot;</span>, <span class="ident">username</span>,)
             .<span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
             .<span class="kw">await</span>
@@ -451,7 +473,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_exists</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">username_exists</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;SELECT EXISTS (SELECT 1 from admin_users WHERE username = $1)&quot;</span>,
             <span class="kw-2">&amp;</span><span class="ident">username</span>
@@ -470,8 +492,8 @@
         <span class="prelude-val">Ok</span>(<span class="ident">exists</span>)
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_username</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateUsernamePayload</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">sqlx::query!</span>(
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_username</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">UpdateUsernamePayload</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;UPDATE admin_users set username = $1 WHERE username = $2&quot;</span>,
             <span class="kw-2">&amp;</span><span class="ident">payload</span>.<span class="ident">new_username</span>,
             <span class="kw-2">&amp;</span><span class="ident">payload</span>.<span class="ident">old_username</span>,
@@ -479,10 +501,13 @@
         .<span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="ident">map_register_err</span>)<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">x</span>.<span class="ident">rows_affected</span>() <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DBError::AccountNotFound</span>);
+        }
         <span class="prelude-val">Ok</span>(())
     }
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_secret</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">secret</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">sqlx::query!</span>(
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_secret</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">secret</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="macro">sqlx::query!</span>(
             <span class="string">&quot;UPDATE admin_users set secret = $1
         WHERE username = $2&quot;</span>,
             <span class="ident">secret</span>,
@@ -491,10 +516,14 @@
         .<span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="ident">map_register_err</span>)<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">x</span>.<span class="ident">rows_affected</span>() <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DBError::AccountNotFound</span>);
+        }
+
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_secret</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_secret</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">DBResult</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">struct</span> <span class="ident">Secret</span> {
             <span class="ident">secret</span>: <span class="ident">String</span>,
         }
@@ -506,14 +535,14 @@
         .<span class="ident">fetch_one</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool</span>)
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">e</span> {
-            <span class="ident">Error::RowNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::AccountNotFound</span>,
-            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
+            <span class="ident">Error::RowNotFound</span> =&gt; <span class="ident">DBError::AccountNotFound</span>,
+            <span class="ident">e</span> =&gt; <span class="ident">DBError::DBError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)),
         })<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">secret</span>.<span class="ident">secret</span>)
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="db_sqlx_postgres" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>
